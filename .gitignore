@@ -129,5 +129,6 @@ dmypy.json
 .pyre/
 
 #extra directories/files
+modelling_pipeline/datasets/*
 .vscode/*
 logs/*
