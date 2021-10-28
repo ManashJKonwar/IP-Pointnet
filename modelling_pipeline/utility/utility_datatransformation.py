@@ -22,6 +22,9 @@ def download_dataset(dataset_url=None, dataset_directory=None):
     """
     try:
         if dataset_url is not None:
+            if os.path.exists(os.path.join(dataset_directory, 'datasets', os.path.basename(dataset_url).split('.')[0])):
+                return os.path.join(dataset_directory, 'datasets', os.path.basename(dataset_url).split('.')[0])
+            
             DATA_DIR = tf.keras.utils.get_file(
                 "modelnet.zip",
                 dataset_url,
@@ -48,3 +51,9 @@ def visualize_dataset(dataset_directory=None, mesh_filename_path=None):
             return mesh
     except Exception:
         print('Caught Exception while reading meshfile', exc_info=True)
+
+def save_model_weights(model=None, model_name=None, path_to_save=None):
+    if model is not None and model_name is not None and path_to_save is not None:
+        if not os.path.exists(path_to_save):
+            os.makedirs(path_to_save)
+        model.save_weights(filepath=os.path.join(path_to_save, model_name), overwrite=True)
