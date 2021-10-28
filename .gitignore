@@ -130,5 +130,6 @@ dmypy.json
 
 #extra directories/files
 modelling_pipeline/datasets/*
+modelling_pipeline/models/*
 .vscode/*
 logs/*
