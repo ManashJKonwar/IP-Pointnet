@@ -1,7 +1,12 @@
+# Dash
+# ------------------------------------------------------------------------------
+dash==2.0.0  # https://pypi.org/project/dash/2.0.0/  # The core dash backend
+dash-bootstrap-components==1.0.0  # https://pypi.org/project/dash-bootstrap-components/1.0.0/  # dash bootstrap components
+
 # Modelling Modules
 # ------------------------------------------------------------------------------
-tensorflow==2.6.0
+tensorflow==2.6.1  # https://pypi.org/project/tensorflow/2.6.1/  # Tensorflow engine
 
 # Data Visulaization
 # ------------------------------------------------------------------------------
-trimesh==3.9.34
+trimesh==3.9.35  # https://pypi.org/project/trimesh/3.9.35/  # Loading Mesh files for CAD components
