@@ -17,11 +17,11 @@ PLOTLY_LOGO = "https://images.plot.ly/logo/new-branding/plotly-logomark.png"
 # make a reuseable dropdown for the different examples
 dropdown = dbc.DropdownMenu(
     children=[
-        dbc.DropdownMenuItem("Pointnet Classification"),
+        dbc.DropdownMenuItem("Pointnet Classification", href="/pointnet-classification"),
         dbc.DropdownMenuItem(divider=True),
-        dbc.DropdownMenuItem("Pointnet Part Segmentation"),
+        dbc.DropdownMenuItem("Pointnet Part Segmentation", href="/pointnet-part-segmentation"),
         dbc.DropdownMenuItem(divider=True),
-        dbc.DropdownMenuItem("Pointnet Semantic Segmentation"),
+        dbc.DropdownMenuItem("Pointnet Semantic Segmentation", href="/pointnet-semantic-segmentation"),
     ],
     nav=True,
     in_navbar=True,
@@ -37,7 +37,7 @@ navbar = dbc.Navbar(
                         dbc.Row(
                             [
                                 dbc.Col(html.Img(src=PLOTLY_LOGO, height="30px")),
-                                dbc.Col(dbc.NavbarBrand("Logo", className="ms-2")),
+                                dbc.Col(dbc.NavbarBrand("Pointnet Platter", className="ms-2")),
                             ],
                             align="center",
                             className="g-0",
@@ -64,6 +64,4 @@ navbar = dbc.Navbar(
         )
 
 content = html.Div(id="page-content", className="content")
-layout = html.Div(
-            [navbar, content]
-        )
+layout = html.Div([dcc.Location(id="url"), navbar, content])
