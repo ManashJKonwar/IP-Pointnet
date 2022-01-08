@@ -11,7 +11,7 @@ import dash_bootstrap_components as dbc
 from dash import html
 from dash.dependencies import Input, Output
 from dash_pipeline.calback_manager import CallbackManager
-from dash_pipeline.layouts import layout_mainframe   
+from dash_pipeline.layouts import layout_mainframe, layout_pointnet_classifier   
 
 callback_manager = CallbackManager()
 
@@ -20,9 +20,9 @@ callback_manager = CallbackManager()
                         Input(component_id='url', component_property='pathname'))
 def render_page_content(pathname):
     if pathname == "/":
-        return html.P("This is pointnet classification page!")
+        return layout_pointnet_classifier.layout
     elif pathname == "/pointnet-classification":
-        return html.P("This is pointnet classification page!")
+        return layout_pointnet_classifier.layout
     elif pathname == "/pointnet-part-segmentation": 
         return html.P("This is pointnet part segmentation page!")
     elif pathname == "/pointnet-semantic-segmentation":

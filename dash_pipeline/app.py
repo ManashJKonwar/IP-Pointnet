@@ -12,6 +12,7 @@ import logging, logging.config
 import dash_bootstrap_components as dbc
 from flask import Flask
 from dash_pipeline.callbacks.callback_mainframe import callback_manager as mainframe_callback_manager
+from dash_pipeline.callbacks.callback_pointnet_classifier import callback_manager as classifier_callback_manager
 
 FA = "https://use.fontawesome.com/releases/v5.15.1/css/all.css"
 external_stylesheets = [dbc.themes.BOOTSTRAP, FA]
@@ -20,3 +21,4 @@ app = dash.Dash(external_stylesheets=external_stylesheets, server=server)
 app.config.suppress_callback_exceptions = True
 
 mainframe_callback_manager.attach_to_app(app)
+classifier_callback_manager.attach_to_app(app)
