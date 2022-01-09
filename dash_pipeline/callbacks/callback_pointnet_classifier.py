@@ -7,9 +7,10 @@ __maintainer__ = "konwar.m"
 __email__ = "rickykonwar@gmail.com"
 __status__ = "Development"
 
+import dash
 from dash import dcc
 from dash import html
-from dash.dependencies import Input, Output
+from dash.dependencies import Input, Output, State
 from dash_pipeline.calback_manager import CallbackManager
 
 callback_manager = CallbackManager()
@@ -30,3 +31,20 @@ def update_detection_mode(value):
             )
         ]
     return []
+
+@callback_manager.callback(Output(component_id='modal', component_property='is_open'),
+                        [Input(component_id='learn-more-button', component_property='n_clicks'), 
+                        Input(component_id='classifier-modal-close', component_property='n_clicks')],
+                        State(component_id='modal', component_property='is_open'))
+def update_click_output(button_click, close_click, is_open):
+    ctx = dash.callback_context
+    prop_id = ""
+    if ctx.triggered:
+        prop_id = ctx.triggered[0]["prop_id"].split(".")[0]
+
+    if prop_id == 'learn-more-button':
+        return True
+    elif prop_id == 'classifier-modal-close':
+        return False
+    else:
+        return is_open
