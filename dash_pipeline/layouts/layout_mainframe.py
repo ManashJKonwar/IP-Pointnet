@@ -46,10 +46,13 @@ navbar = dbc.Navbar(
                         style={"textDecoration": "none"},
                     ),
                     dbc.NavbarToggler(id="navbar-toggler2", n_clicks=0),
-                    dbc.Collapse(
+                    dbc.Collapse(   
                         dbc.Nav(
                             # [nav_item, dropdown],
-                            [dropdown],
+                            [dbc.NavLink('Pointnet Classification', href="/pointnet-classification", active='exact'),
+                            dbc.NavLink('Pointnet Part Segmentation', href="/pointnet-part-segmentation", active='exact'),
+                            dbc.NavLink('Pointnet Semantic Segmentation', href="/pointnet-semantic-segmentation", active='exact')],
+                            # dropdown],
                             className="ms-auto",
                             navbar=True,
                         ),
@@ -57,10 +60,11 @@ navbar = dbc.Navbar(
                         navbar=True,
                     ),
                 ],
+                fluid=True
             ),
             color="dark",
             dark=True,
-            className="mb-5",
+            className="mb-5"
         )
 
 content = html.Div(id="page-content", className="content")
