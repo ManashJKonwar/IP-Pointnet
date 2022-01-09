@@ -60,13 +60,10 @@ def classifier_modal():
 
 layout = html.Div(
             children=[
-                # dcc.Interval(id="interval-updating-graphs", interval=1000, n_intervals=0),
-                # html.Div(id="top-bar", className="row"),
                 dbc.Row([
-                    dbc.Col(
+                    dbc.Col([
                         html.Div(
                             id="left-side-column",
-                            # className="eight columns",
                             children=[
                                 html.Div(
                                     id="header-section",
@@ -84,13 +81,10 @@ layout = html.Div(
                                 ),
                                 html.Div(
                                     dcc.Graph(id='model-output', style={"height": "70vh"}), 
-                                    # className="row"
                                 ),
                                 html.Div(
-                                    # className="control-section",
                                     children=[
                                         html.Div(
-                                            className="control-element",
                                             children=[
                                                 html.Div(
                                                     children=["Minimum Confidence Threshold:"]
@@ -111,7 +105,6 @@ layout = html.Div(
                                             ],
                                         ),
                                         html.Div(
-                                            # className="control-element",
                                             children=[
                                                 html.Div(children=["Footage Selection:"]),
                                                 dcc.Dropdown(
@@ -156,7 +149,6 @@ layout = html.Div(
                                             ],
                                         ),
                                         html.Div(
-                                            # className="control-element",
                                             children=[
                                                 html.Div(children=["Video Display Mode:"]),
                                                 dcc.Dropdown(
@@ -178,7 +170,6 @@ layout = html.Div(
                                             ],
                                         ),
                                         html.Div(
-                                            # className="control-element",
                                             children=[
                                                 html.Div(children=["Graph View Mode:"]),
                                                 dcc.Dropdown(
@@ -203,17 +194,16 @@ layout = html.Div(
                                 ),
                             ],
                         )
-                    ),
-                    dbc.Col(
+                    ]),
+                    dbc.Col([
                         html.Div(
                             id="right-side-column",
-                            # className="four columns",
                             children=[
                                 html.Div(id="div-visual-mode"),
                                 html.Div(id="div-detection-mode"),
                             ],
                         )
-                    )
-                ]),
+                    ]   )    
+                ], style={'padding':'10px'}),
                 classifier_modal(),
             ])
