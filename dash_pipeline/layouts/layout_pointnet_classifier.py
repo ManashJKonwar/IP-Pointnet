@@ -12,6 +12,8 @@ from dash import dcc
 from dash import html
 from textwrap import dedent
 
+from dash_pipeline.backend import *
+
 def classifier_modal():
     return html.Div([
                 dbc.Modal(
@@ -106,44 +108,11 @@ layout = html.Div(
                                         ),
                                         html.Div(
                                             children=[
-                                                html.Div(children=["Footage Selection:"]),
+                                                html.Div(children=["Class Selection:"]),
                                                 dcc.Dropdown(
-                                                    id="dropdown-footage-selection",
-                                                    options=[
-                                                        {
-                                                            "label": "Drone recording of canal festival",
-                                                            "value": "DroneCanalFestival",
-                                                        },
-                                                        {
-                                                            "label": "Drone recording of car festival",
-                                                            "value": "car_show_drone",
-                                                        },
-                                                        {
-                                                            "label": "Drone recording of car festival #2",
-                                                            "value": "DroneCarFestival2",
-                                                        },
-                                                        {
-                                                            "label": "Drone recording of a farm",
-                                                            "value": "FarmDrone",
-                                                        },
-                                                        {
-                                                            "label": "Lion fighting Zebras",
-                                                            "value": "zebra",
-                                                        },
-                                                        {
-                                                            "label": "Man caught by a CCTV",
-                                                            "value": "ManCCTV",
-                                                        },
-                                                        {
-                                                            "label": "Man driving expensive car",
-                                                            "value": "car_footage",
-                                                        },
-                                                        {
-                                                            "label": "Restaurant Robbery",
-                                                            "value": "RestaurantHoldup",
-                                                        },
-                                                    ],
-                                                    value="car_show_drone",
+                                                    id="dropdown-class-selection",
+                                                    options = [{'label': class_item.capitalize(), 'value': class_item} for class_item in class_map.values()],
+                                                    value=list(class_map.values())[0],
                                                     clearable=False,
                                                 ),
                                             ],
