@@ -11,7 +11,6 @@ import dash_bootstrap_components as dbc
 from dash import dcc
 from dash import html
 from textwrap import dedent
-
 from dash_pipeline.backend import *
 
 def classifier_modal():
@@ -119,20 +118,9 @@ layout = html.Div(
                                         ),
                                         html.Div(
                                             children=[
-                                                html.Div(children=["Video Display Mode:"]),
+                                                html.Div(children=["Image Selection:"]),
                                                 dcc.Dropdown(
-                                                    id="dropdown-video-display-mode",
-                                                    options=[
-                                                        {
-                                                            "label": "Regular Display",
-                                                            "value": "regular",
-                                                        },
-                                                        {
-                                                            "label": "Display with Bounding Boxes",
-                                                            "value": "bounding_box",
-                                                        },
-                                                    ],
-                                                    value="bounding_box",
+                                                    id="dropdown-image-selection",
                                                     searchable=False,
                                                     clearable=False,
                                                 ),
