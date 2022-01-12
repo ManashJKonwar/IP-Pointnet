@@ -7,6 +7,10 @@ dash-bootstrap-components==1.0.0  # https://pypi.org/project/dash-bootstrap-comp
 # ------------------------------------------------------------------------------
 tensorflow==2.6.1  # https://pypi.org/project/tensorflow/2.6.1/  # Tensorflow engine
 
+# Data Generation and Manipulation
+# ------------------------------------------------------------------------------
+pandas==1.3.5  # https://pypi.org/project/pandas/1.3.5/  # Dataframe Related Operations
+
 # Data Visulaization
 # ------------------------------------------------------------------------------
 trimesh==3.9.35  # https://pypi.org/project/trimesh/3.9.35/  # Loading Mesh files for CAD components

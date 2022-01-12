@@ -30,9 +30,9 @@ def find_index (a, n, key):
             end = i
             break
     if start == end:
-        print("Only one key is present at index : ", start)
+        # print("Only one key is present at index : ", start)
         return start, end
     else:
-        print("Start index: ", start)
-        print("Last index: ", end)
+        # print("Start index: ", start)
+        # print("Last index: ", end)
         return start, end
