@@ -81,7 +81,10 @@ layout = html.Div(
                                     ],
                                 ),
                                 html.Div(
-                                    dcc.Graph(id='model-output', style={"height": "70vh"}), 
+                                    dcc.Loading(
+                                        dcc.Graph(id='model-output', style={"height": "70vh"}),
+                                        type="cube",
+                                    )
                                 ),
                                 html.Div(
                                     children=[
