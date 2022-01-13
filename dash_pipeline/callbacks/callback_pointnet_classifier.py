@@ -37,21 +37,29 @@ def update_click_output(button_click, close_click, is_open):
         return is_open
 
 @callback_manager.callback(Output(component_id='div-detection-mode', component_property='children'),
-                        Input(component_id='dropdown-graph-view-mode', component_property='value'))
-def update_detection_mode(value):
-    if value == "detection":
-        return [
-            html.Div(
-                children=[
-                    html.P(
-                        children="Detection Score of Most Probable Objects",
-                        className="plot-title",
-                    ),
-                    dcc.Graph(id="bar-score-graph"),
-                ]
-            )
-        ]
-    return []
+                        Input(component_id='dropdown-image-selection', component_property='value'),
+                        State(component_id='dropdown-class-selection', component_property='value'))
+def update_detection_mode(image_value, class_value):
+    prnt('here')
+    class_index = list(class_map.keys())[list(class_map.values()).index(class_value)]
+    start_index, end_index = find_index(test_labels, len(test_labels), class_index)
+
+    if start_index != None and end_index != None:
+        total_images = end_index-start_index+1
+        image_options = [class_value+'-'+str(image_no) for image_no in range(total_images)]
+        image_index = image_options.index(image_value) + start_index
+
+        test_image_array = test_points[image_index]
+    else:
+        return dash.no_update
+
+    return [
+        html.Div(
+            children=[
+                dcc.Graph(id="bar-score-graph"),
+            ]
+        )
+    ]
 
 @callback_manager.callback([Output(component_id='dropdown-image-selection', component_property='options'),
                         Output(component_id='dropdown-image-selection', component_property='value')],

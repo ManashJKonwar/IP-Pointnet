@@ -129,27 +129,27 @@ layout = html.Div(
                                                 ),
                                             ],
                                         ),
-                                        html.Div(
-                                            children=[
-                                                html.Div(children=["Graph View Mode:"]),
-                                                dcc.Dropdown(
-                                                    id="dropdown-graph-view-mode",
-                                                    options=[
-                                                        {
-                                                            "label": "Visual Mode",
-                                                            "value": "visual",
-                                                        },
-                                                        {
-                                                            "label": "Detection Mode",
-                                                            "value": "detection",
-                                                        },
-                                                    ],
-                                                    value="detection",
-                                                    searchable=False,
-                                                    clearable=False,
-                                                ),
-                                            ],
-                                        ),
+                                        # html.Div(
+                                        #     children=[
+                                        #         html.Div(children=["Graph View Mode:"]),
+                                        #         dcc.Dropdown(
+                                        #             id="dropdown-graph-view-mode",
+                                        #             options=[
+                                        #                 {
+                                        #                     "label": "Visual Mode",
+                                        #                     "value": "visual",
+                                        #                 },
+                                        #                 {
+                                        #                     "label": "Detection Mode",
+                                        #                     "value": "detection",
+                                        #                 },
+                                        #             ],
+                                        #             value="detection",
+                                        #             searchable=False,
+                                        #             clearable=False,
+                                        #         ),
+                                        #     ],
+                                        # ),
                                     ],
                                 ),
                             ],
@@ -159,8 +159,9 @@ layout = html.Div(
                         html.Div(
                             id="right-side-column",
                             children=[
-                                html.Div(id="div-visual-mode"),
-                                html.Div(id="div-detection-mode"),
+                                # html.Div(id="div-visual-mode"),
+                                html.P(children="Pointnet Classifier Insights"),
+                                html.Div(id="div-detection-mode")
                             ],
                         )
                     ]   )    
