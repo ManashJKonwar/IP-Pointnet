@@ -57,3 +57,9 @@ def save_model_weights(model=None, model_name=None, path_to_save=None):
         if not os.path.exists(path_to_save):
             os.makedirs(path_to_save)
         model.save_weights(filepath=os.path.join(path_to_save, model_name), overwrite=True)
+
+def save_model(model=None, model_name=None, path_to_save=None):
+    if model is not None and model_name is not None and path_to_save is not None:
+        if not os.path.exists(path_to_save):
+            os.makedirs(path_to_save)
+        model.save(os.path.join(path_to_save, model_name), overwrite=True)

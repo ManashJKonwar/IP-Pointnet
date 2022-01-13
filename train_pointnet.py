@@ -9,7 +9,7 @@ __status__ = "Development"
 
 from modelling_pipeline.preprocessing.data_preprocesser import augment_dataset, parse_dataset
 from modelling_pipeline.modelling.train_pointnet_classifier import generate_pointnet_model, train_pointnet_classifier
-from modelling_pipeline.utility.utility_datatransformation import download_dataset, save_model_weights
+from modelling_pipeline.utility.utility_datatransformation import download_dataset, save_model_weights, save_model
 
 if __name__ == '__main__':
     TRAIN_POINTNET_CLASSIFIER = True
@@ -47,4 +47,5 @@ if __name__ == '__main__':
         trained_pointnet_model = train_pointnet_classifier(model=pointnet_model, train_dataset=train_dataset, test_dataset=test_dataset)
 
         # Save Trained Point Net Model
-        save_model_weights(model=trained_pointnet_model, model_name = 'pointnet_classifier_10cls.h5', path_to_save=r'modelling_pipeline\models')
+        # save_model_weights(model=trained_pointnet_model, model_name = 'pointnet_classifier_10cls.h5', path_to_save=r'modelling_pipeline\models')
+        save_model(model=trained_pointnet_model, model_name = 'pointnet_classifier_10cls.h5', path_to_save=r'modelling_pipeline\models')
