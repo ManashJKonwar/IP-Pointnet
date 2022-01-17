@@ -12,6 +12,8 @@ import pickle
 import trimesh
 import numpy as np
 from numpy import save, load
+from tensorflow import keras
+from modelling_pipeline.modelling.train_pointnet_classifier import generate_pointnet_model
 
 #region Pointnet Classifier
 NUM_POINTS = 2048
@@ -59,4 +61,16 @@ else:
     test_labels = load(r'dash_pipeline\datasets\pointnet_classifier\test_labels.npy')
     with open(r'dash_pipeline\datasets\pointnet_classifier\class_map.pkl', 'rb') as f:
         class_map = pickle.load(f)
+
+def load_classifier_model(model_wts_filename=None):
+    trained_classifier_model = None
+    if os.path.exists(model_wts_filename):
+        trained_classifier_model = generate_pointnet_model(num_points=NUM_POINTS,
+                                                        num_classes=NUM_CLASSES)
+        trained_classifier_model.load_weights(model_wts_filename)
+    
+    return trained_classifier_model
+
+trained_classifier_model = None
+trained_classifier_model = load_classifier_model(model_wts_filename=r'modelling_pipeline\models\pointnet_classifier_10cls.h5')
 #endregion
