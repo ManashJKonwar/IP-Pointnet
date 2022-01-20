@@ -57,3 +57,8 @@ def save_model_weights(model=None, model_name=None, path_to_save=None):
         if not os.path.exists(path_to_save):
             os.makedirs(path_to_save)
         model.save_weights(filepath=os.path.join(path_to_save, model_name), overwrite=True)
+
+def generate_history_callback(history_file_name=None, history_path_to_save=None):
+    if history_file_name is not None and history_path_to_save is not None:
+        history_logger = tf.keras.callbacks.CSVLogger(os.path.join(history_path_to_save, history_file_name), separator=",", append=True)
+        return history_logger

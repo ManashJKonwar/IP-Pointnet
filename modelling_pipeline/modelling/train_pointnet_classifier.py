@@ -100,15 +100,17 @@ def generate_pointnet_model(num_points=2048, num_classes=10):
     except Exception:
         print('Caught Exception while Generating Pointnet Model Architecture', exc_info=True)
 
-def train_pointnet_classifier(model=None, train_dataset=None, test_dataset=None):
+def train_pointnet_classifier(model=None, train_dataset=None, test_dataset=None, model_history_logger=None):
     try:
-        if model is not None and train_dataset is not None and test_dataset is not None:
+        if model is not None and train_dataset is not None and test_dataset is not None and model_history_logger is not None:
+            
             model.compile(
                 loss="sparse_categorical_crossentropy",
                 optimizer=keras.optimizers.Adam(learning_rate=0.001),
                 metrics=["sparse_categorical_accuracy"],
             )
-            model.fit(train_dataset, epochs=20, validation_data=test_dataset)
+            # model.fit(train_dataset, epochs=1, callbacks=[model_history_logger], validation_data=test_dataset)
+            model.fit(train_dataset, epochs=20, callbacks=[model_history_logger], validation_data=test_dataset)
             return model
     except Exception:
         print('Cught Exception while training the Pointnet Model', exc_info=True)

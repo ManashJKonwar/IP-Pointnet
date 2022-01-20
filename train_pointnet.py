@@ -12,7 +12,7 @@ import pickle
 from numpy import load, save
 from modelling_pipeline.preprocessing.data_preprocesser import augment_dataset, parse_dataset
 from modelling_pipeline.modelling.train_pointnet_classifier import generate_pointnet_model, train_pointnet_classifier
-from modelling_pipeline.utility.utility_datatransformation import download_dataset, save_model_weights
+from modelling_pipeline.utility.utility_datatransformation import download_dataset, generate_history_callback, save_model_weights 
 
 if __name__ == '__main__':
     TRAIN_POINTNET_CLASSIFIER = True
@@ -66,9 +66,16 @@ if __name__ == '__main__':
         # Generate the Point Net Model Architecture
         pointnet_model = generate_pointnet_model(num_points=NUM_POINTS,
                                                 num_classes=NUM_CLASSES)
+
+        # Generate the Point Net Model History Callback Logger
+        pointnet_history_logger = generate_history_callback(history_file_name='pointnet_classifier_10cls_history.csv',
+                                                            history_path_to_save=r'modelling_pipeline\models')
         
         # Train the Point Net Model 
-        trained_pointnet_model = train_pointnet_classifier(model=pointnet_model, train_dataset=train_dataset, test_dataset=test_dataset)
+        trained_pointnet_model = train_pointnet_classifier(model=pointnet_model, 
+                                                        train_dataset=train_dataset, 
+                                                        test_dataset=test_dataset,
+                                                        model_history_logger=pointnet_history_logger)
 
         # Save Trained Point Net Model Weights
         save_model_weights(model=trained_pointnet_model, model_name = 'pointnet_classifier_10cls.h5', path_to_save=r'modelling_pipeline\models')
