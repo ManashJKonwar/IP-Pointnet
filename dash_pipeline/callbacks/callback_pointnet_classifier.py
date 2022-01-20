@@ -9,13 +9,16 @@ __status__ = "Development"
 
 import dash
 import pandas as pd
+import tensorflow as tf
 import plotly.express as px
+import dash_bootstrap_components as dbc
 from dash import dcc
 from dash import html
 from dash.dependencies import Input, Output, State
 from dash_pipeline.calback_manager import CallbackManager
 from dash_pipeline.backend import *
 from dash_pipeline.utility.utility_app import find_index
+from dash_pipeline.backend import trained_classifier_model, class_map
 
 callback_manager = CallbackManager()
 
@@ -40,7 +43,6 @@ def update_click_output(button_click, close_click, is_open):
                         Input(component_id='dropdown-image-selection', component_property='value'),
                         State(component_id='dropdown-class-selection', component_property='value'))
 def update_detection_mode(image_value, class_value):
-    prnt('here')
     class_index = list(class_map.keys())[list(class_map.values()).index(class_value)]
     start_index, end_index = find_index(test_labels, len(test_labels), class_index)
 
@@ -50,13 +52,26 @@ def update_detection_mode(image_value, class_value):
         image_index = image_options.index(image_value) + start_index
 
         test_image_array = test_points[image_index]
+
+        # Create Prediction Data for finding pointnet classifier prediction
+        test_dataset = tf.data.Dataset.from_tensor_slices((test_points, np.array([class_index]*len(test_points))))
+        test_dataset = test_dataset.shuffle(len(test_points)).batch(32)
+        
+        tensor_points, tensor_labels = list(test_dataset.take(1))[0]
+
+        preds = trained_classifier_model.predict(tensor_points)
+        preds = tf.math.argmax(preds, -1)
+        predicted_class = class_map[preds[0].numpy()]
+
     else:
         return dash.no_update
 
     return [
         html.Div(
             children=[
-                dcc.Graph(id="bar-score-graph"),
+                dbc.Row("Classifier Prediction: %s" %(predicted_class)),
+                dbc.Row("Actual Label: %s" %(class_map[tensor_labels.numpy()[0]]))
+                # dcc.Graph(id="bar-score-graph"),
             ]
         )
     ]
