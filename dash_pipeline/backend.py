@@ -11,6 +11,7 @@ import os, sys, glob
 import pickle
 import trimesh
 import numpy as np
+import pandas as pd
 from numpy import save, load
 from tensorflow import keras
 from modelling_pipeline.modelling.train_pointnet_classifier import generate_pointnet_model
@@ -73,4 +74,14 @@ def load_classifier_model(model_wts_filename=None):
 
 trained_classifier_model = None
 trained_classifier_model = load_classifier_model(model_wts_filename=r'modelling_pipeline\models\pointnet_classifier_10cls.h5')
+
+def load_training_history(model_history_filename=None):
+    trained_classifier_history = None
+    if os.path.exists(model_history_filename):
+        trained_classifier_history = pd.read_csv(model_history_filename)
+
+    return trained_classifier_history
+
+trained_classifier_history = None
+trained_classifier_history = load_training_history(model_history_filename=r'modelling_pipeline\models\pointnet_classifier_10cls_history.csv')
 #endregion
