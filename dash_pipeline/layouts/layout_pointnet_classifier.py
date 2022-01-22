@@ -81,6 +81,17 @@ layout = html.Div(
                                     ],
                                 ),
                                 html.Div(
+                                    children=[
+                                        html.Div(children=["Model Selection:"]),
+                                        dcc.Dropdown(
+                                            id="dropdown-model-selection",
+                                            options = [{'label': classifier_item, 'value': classifier_item} for classifier_item in ['pointnet_10cls_20epochs']],
+                                            value='pointnet_10cls_20epochs',
+                                            clearable=False,
+                                        ),
+                                    ],
+                                ),
+                                html.Div(
                                     dcc.Loading(
                                         dcc.Graph(id='model-output', style={"height": "70vh"}),
                                         type="cube",
@@ -159,9 +170,17 @@ layout = html.Div(
                         html.Div(
                             id="right-side-column",
                             children=[
+                                html.Div(children=["Pointnet Classifier Insights:"]),
+                                dbc.Row([
+                                    dcc.Loading(
+                                        dcc.Graph(id='model-training-history', style={"height": "70vh"}),
+                                        type="cube",
+                                    )
+                                ]),
                                 # html.Div(id="div-visual-mode"),
-                                html.P(children="Pointnet Classifier Insights"),
-                                html.Div(id="div-detection-mode")
+                                dbc.Row([
+                                    html.Div(id="div-detection-mode")
+                                ])
                             ],
                         )
                     ]   )    
