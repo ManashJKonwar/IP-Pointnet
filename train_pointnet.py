@@ -15,14 +15,25 @@ from modelling_pipeline.modelling.train_pointnet_classifier import generate_poin
 from modelling_pipeline.utility.utility_datatransformation import download_dataset, generate_history_callback, save_model_weights 
 
 if __name__ == '__main__':
-    TRAIN_POINTNET_CLASSIFIER = True
-    TRAIN_POINTNET_PART_SEGMENTATOR = False
+    TRAIN_POINTNET_CLASSIFIER = False
+    TRAIN_POINTNET_PART_SEGMENTATOR = True
     TRAIN_POINTNET_SEMANTIC_SEGMANTATOR = False
-    DATASET_URL = "http://3dvision.princeton.edu/projects/2014/3DShapeNets/ModelNet10.zip"
-    DATASET_DIR = r"modelling_pipeline"
+    POINTNET_CLASSIFIER_DATASET_URL = "http://3dvision.princeton.edu/projects/2014/3DShapeNets/ModelNet10.zip"
+    POINTNET_CLASSIFIER_DATASET_DIR = r"modelling_pipeline"
+    POINTNET_CLASSIFIER_DATASET_NAME = "ModelNet10"
+    POINTNET_PART_SEGMENTER_DATASET_URL = "https://git.io/JiY4i"
+    POINTNET_PART_SEGMENTER_DATASET_DIR = r"modelling_pipeline"
+    POINTNET_PART_SEGMENTER_DATASET_NAME = "PartAnnotation"
 
     # Downloading Point Cloud Dataset
-    dataset_directory = download_dataset(dataset_url=DATASET_URL, dataset_directory=DATASET_DIR)
+    classifier_dataset_directory = download_dataset(dataset_url=POINTNET_CLASSIFIER_DATASET_URL, 
+                                                    dataset_directory=POINTNET_CLASSIFIER_DATASET_DIR, 
+                                                    zipped_name="modelnet.zip",
+                                                    extracted_folder_name=POINTNET_CLASSIFIER_DATASET_NAME)
+    part_segmenter_dataset_directory = download_dataset(dataset_url=POINTNET_PART_SEGMENTER_DATASET_URL, 
+                                                        dataset_directory=POINTNET_PART_SEGMENTER_DATASET_DIR, 
+                                                        zipped_name="shapenet.zip",
+                                                        extracted_folder_name=POINTNET_PART_SEGMENTER_DATASET_NAME)
     
     # Training Point Cloud Classifier
     if TRAIN_POINTNET_CLASSIFIER:
@@ -39,7 +50,7 @@ if __name__ == '__main__':
         or not os.path.exists(r'dash_pipeline\datasets\pointnet_classifier\test_points.npy') \
         or not os.path.exists(r'dash_pipeline\datasets\pointnet_classifier\test_labels.npy') \
         or not os.path.exists(r'dash_pipeline\datasets\pointnet_classifier\class_map.pkl'):
-            train_points, test_points, train_labels, test_labels, CLASS_MAP = parse_dataset(dataset_directory=dataset_directory,
+            train_points, test_points, train_labels, test_labels, CLASS_MAP = parse_dataset(dataset_directory=classifier_dataset_directory,
                                                                                             num_points=NUM_POINTS)
             
             save(r'dash_pipeline\datasets\pointnet_classifier\train_points.npy', train_points)
@@ -79,3 +90,6 @@ if __name__ == '__main__':
 
         # Save Trained Point Net Model Weights
         save_model_weights(model=trained_pointnet_model, model_name = 'pointnet_classifier_10cls.h5', path_to_save=r'modelling_pipeline\models')
+    
+    if TRAIN_POINTNET_PART_SEGMENTATOR:
+        print('here')
