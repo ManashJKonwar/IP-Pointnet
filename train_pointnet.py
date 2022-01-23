@@ -7,10 +7,10 @@ __maintainer__ = "konwar.m"
 __email__ = "rickykonwar@gmail.com"
 __status__ = "Development"
 
-import os
+import os, json
 import pickle
 from numpy import load, save
-from modelling_pipeline.preprocessing.data_preprocesser import augment_dataset, parse_dataset
+from modelling_pipeline.preprocessing.data_preprocesser import augment_dataset, parse_dataset, parse_segmentation_dataset
 from modelling_pipeline.modelling.train_pointnet_classifier import generate_pointnet_model, train_pointnet_classifier
 from modelling_pipeline.utility.utility_datatransformation import download_dataset, generate_history_callback, save_model_weights 
 
@@ -45,26 +45,26 @@ if __name__ == '__main__':
 
         # Creating data points for this pointnet dataset by reading each mesh file using trimesh module and generating 2048
         # points on each of these files.
-        if not os.path.exists(r'dash_pipeline\datasets\pointnet_classifier\train_points.npy') \
-        or not os.path.exists(r'dash_pipeline\datasets\pointnet_classifier\train_labels.npy') \
-        or not os.path.exists(r'dash_pipeline\datasets\pointnet_classifier\test_points.npy') \
-        or not os.path.exists(r'dash_pipeline\datasets\pointnet_classifier\test_labels.npy') \
-        or not os.path.exists(r'dash_pipeline\datasets\pointnet_classifier\class_map.pkl'):
+        if not os.path.exists(r'modelling_pipeline\datasets\preprocessed\pointnet_classifier\train_points.npy') \
+        or not os.path.exists(r'modelling_pipeline\datasets\preprocessed\pointnet_classifier\train_labels.npy') \
+        or not os.path.exists(r'modelling_pipeline\datasets\preprocessed\pointnet_classifier\test_points.npy') \
+        or not os.path.exists(r'modelling_pipeline\datasets\preprocessed\pointnet_classifier\test_labels.npy') \
+        or not os.path.exists(r'modelling_pipeline\datasets\preprocessed\pointnet_classifier\class_map.pkl'):
             train_points, test_points, train_labels, test_labels, CLASS_MAP = parse_dataset(dataset_directory=classifier_dataset_directory,
                                                                                             num_points=NUM_POINTS)
             
-            save(r'dash_pipeline\datasets\pointnet_classifier\train_points.npy', train_points)
-            save(r'dash_pipeline\datasets\pointnet_classifier\test_points.npy', test_points)
-            save(r'dash_pipeline\datasets\pointnet_classifier\train_labels.npy', train_labels)
-            save(r'dash_pipeline\datasets\pointnet_classifier\test_labels.npy', test_labels)
-            with open(r'dash_pipeline\datasets\pointnet_classifier\class_map.pkl', 'wb') as f:
+            save(r'modelling_pipeline\datasets\preprocessed\pointnet_classifier\train_points.npy', train_points)
+            save(r'modelling_pipeline\datasets\preprocessed\pointnet_classifier\test_points.npy', test_points)
+            save(r'modelling_pipeline\datasets\preprocessed\pointnet_classifier\train_labels.npy', train_labels)
+            save(r'modelling_pipeline\datasets\preprocessed\pointnet_classifier\test_labels.npy', test_labels)
+            with open(r'modelling_pipeline\datasets\preprocessed\pointnet_classifier\class_map.pkl', 'wb') as f:
                 pickle.dump(CLASS_MAP, f)
         else:
-            train_points = load(r'dash_pipeline\datasets\pointnet_classifier\train_points.npy')
-            test_points = load(r'dash_pipeline\datasets\pointnet_classifier\test_points.npy')
-            train_labels = load(r'dash_pipeline\datasets\pointnet_classifier\train_labels.npy')
-            test_labels = load(r'dash_pipeline\datasets\pointnet_classifier\test_labels.npy')
-            with open(r'dash_pipeline\datasets\pointnet_classifier\class_map.pkl', 'rb') as f:
+            train_points = load(r'modelling_pipeline\datasets\preprocessed\pointnet_classifier\train_points.npy')
+            test_points = load(r'modelling_pipeline\datasets\preprocessed\pointnet_classifier\test_points.npy')
+            train_labels = load(r'modelling_pipeline\datasets\preprocessed\pointnet_classifier\train_labels.npy')
+            test_labels = load(r'modelling_pipeline\datasets\preprocessed\pointnet_classifier\test_labels.npy')
+            with open(r'modelling_pipeline\datasets\preprocessed\pointnet_classifier\class_map.pkl', 'rb') as f:
                 CLASS_MAP = pickle.load(f)
 
         # Data Augmentation to convert the numpy arrays of train and test dataset into tensorfloe based dataset format
@@ -92,4 +92,48 @@ if __name__ == '__main__':
         save_model_weights(model=trained_pointnet_model, model_name = 'pointnet_classifier_10cls.h5', path_to_save=r'modelling_pipeline\models')
     
     if TRAIN_POINTNET_PART_SEGMENTATOR:
-        print('here')
+        VAL_SPLIT = 0.2
+        NUM_SAMPLE_POINTS = 1024
+        BATCH_SIZE = 32
+        EPOCHS = 60
+        INITIAL_LR = 1e-3
+
+        with open(os.path.join(part_segmenter_dataset_directory,'metadata.json')) as json_file:
+            metadata = json.load(json_file)
+
+        object_name = "Airplane"
+        # Data Reading which focus to specific object
+        points_dir = os.path.join(part_segmenter_dataset_directory, metadata[object_name]["directory"], 'points')
+        labels_dir = os.path.join(part_segmenter_dataset_directory, metadata[object_name]["directory"], 'points_label')
+        LABELS = metadata[object_name]["lables"]
+        COLORS = metadata[object_name]["colors"]
+
+        # Stucturing Dataset for this paprt segmnetation dataset by reading relevant point cloud data and 
+        # point cloud labels
+        if not os.path.exists(r'modelling_pipeline\datasets\preprocessed\pointnet_part_segmenter\%s\point_cloud.npy' %(object_name.lower())) \
+        or not os.path.exists(r'modelling_pipeline\datasets\preprocessed\pointnet_part_segmenter\%s\point_cloud_labels.npy' %(object_name.lower())) \
+        or not os.path.exists(r'modelling_pipeline\datasets\preprocessed\pointnet_part_segmenter\%s\test_point_clouds.npy' %(object_name.lower())) \
+        or not os.path.exists(r'modelling_pipeline\datasets\preprocessed\pointnet_part_segmenter\%s\all_labels.npy' %(object_name.lower())):
+            if not os.path.exists(os.path.join('modelling_pipeline\datasets\preprocessed\pointnet_part_segmenter',object_name.lower())):
+                os.makedirs(os.path.join('modelling_pipeline\datasets\preprocessed\pointnet_part_segmenter',object_name.lower()))
+
+            point_cloud, point_cloud_labels, test_point_clouds, all_labels = parse_segmentation_dataset(dataset_directory=part_segmenter_dataset_directory,
+                                                                                                        points_dir = points_dir,
+                                                                                                        labels_dir = labels_dir,
+                                                                                                        VAL_SPLIT = VAL_SPLIT,
+                                                                                                        NUM_SAMPLE_POINTS = NUM_SAMPLE_POINTS,
+                                                                                                        BATCH_SIZE = BATCH_SIZE,
+                                                                                                        EPOCHS = EPOCHS,
+                                                                                                        INITIAL_LR = INITIAL_LR,
+                                                                                                        LABELS = LABELS,
+                                                                                                        COLORS = COLORS)
+
+            save(r'modelling_pipeline\datasets\preprocessed\pointnet_part_segmenter\%s\point_cloud.npy' %(object_name.lower()) , point_cloud)
+            save(r'modelling_pipeline\datasets\preprocessed\pointnet_part_segmenter\%s\point_cloud_labels.npy' %(object_name.lower()), point_cloud_labels)
+            save(r'modelling_pipeline\datasets\preprocessed\pointnet_part_segmenter\%s\test_point_clouds.npy' %(object_name.lower()), test_point_clouds)
+            save(r'modelling_pipeline\datasets\preprocessed\pointnet_part_segmenter\%s\all_labels.npy' %(object_name.lower()), all_labels)
+        else:
+            point_cloud = load(r'modelling_pipeline\datasets\preprocessed\pointnet_part_segmenter\%s\point_cloud.npy' %(object_name.lower()), allow_pickle=True)
+            point_cloud_labels = load(r'modelling_pipeline\datasets\preprocessed\pointnet_part_segmenter\%s\point_cloud_labels.npy' %(object_name.lower()), allow_pickle=True)
+            test_point_clouds = load(r'modelling_pipeline\datasets\preprocessed\pointnet_part_segmenter\%s\test_point_clouds.npy' %(object_name.lower()), allow_pickle=True)
+            all_labels = load(r'modelling_pipeline\datasets\preprocessed\pointnet_part_segmenter\%s\all_labels.npy' %(object_name.lower()), allow_pickle=True)
