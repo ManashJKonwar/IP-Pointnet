@@ -5,6 +5,7 @@ dash-bootstrap-components==1.0.0  # https://pypi.org/project/dash-bootstrap-comp
 
 # Modelling Modules
 # ------------------------------------------------------------------------------
+tqdm==4.62.3  # https://pypi.org/project/tqdm/4.62.3/  # Fast, Extensible Progress Meter
 tensorflow==2.6.1  # https://pypi.org/project/tensorflow/2.6.1/  # Tensorflow engine
 
 # Data Generation and Manipulation
