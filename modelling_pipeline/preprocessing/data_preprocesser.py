@@ -8,6 +8,7 @@ __email__ = "rickykonwar@gmail.com"
 __status__ = "Development"
 
 import os, sys, glob, tqdm
+import random
 import trimesh
 import numpy as np
 import tensorflow as tf
@@ -153,5 +154,126 @@ def parse_segmentation_dataset(dataset_directory=None, **kwargs):
         except KeyError:
             test_point_clouds.append(point_cloud)
     
-    return point_cloud, point_cloud_labels, test_point_clouds, all_labels
+    return point_clouds, point_cloud_labels, test_point_clouds, all_labels
+
+def preprocess_segmentation_dataset(**kwargs):
+    """
+    Point clouds loaded have inconistent number of points and it becomes difficult to batch them together,
+    However, this can be overcomed by randomly sampling a fixed number of points from each point cloud. 
+    Normalizing the point cloud is also done to remove data invariance issue.
+    Parameters: 
+        kwargs (multiple arguments): point_clouds, point_cloud_labels, all_labels, NUM_SAMPLE_POINTS 
+    Returns: 
+        tuple of numpy arrays representating all files under train and test folders for each classes
+    """
+    point_clouds = kwargs.get('point_clouds')
+    point_cloud_labels = kwargs.get('point_cloud_labels')
+    all_labels = kwargs.get('all_labels')
+    NUM_SAMPLE_POINTS = kwargs.get('NUM_SAMPLE_POINTS')
+
+    for index in tqdm.tqdm(range(len(point_clouds))):
+        current_point_cloud = point_clouds[index]
+        current_label_cloud = point_cloud_labels[index]
+        current_labels = all_labels[index]
+        num_points = len(current_point_cloud)
+        # Randomly sampling respective indices.
+        sampled_indices = random.sample(list(range(num_points)), NUM_SAMPLE_POINTS)
+        # Sampling points corresponding to sampled indices.
+        sampled_point_cloud = np.array([current_point_cloud[i] for i in sampled_indices])
+        # Sampling corresponding one-hot encoded labels.
+        sampled_label_cloud = np.array([current_label_cloud[i] for i in sampled_indices])
+        # Sampling corresponding labels for visualization.
+        sampled_labels = np.array([current_labels[i] for i in sampled_indices])
+        # Normalizing sampled point cloud.
+        norm_point_cloud = sampled_point_cloud - np.mean(sampled_point_cloud, axis=0)
+        norm_point_cloud /= np.max(np.linalg.norm(norm_point_cloud, axis=1))
+        point_clouds[index] = norm_point_cloud
+        point_cloud_labels[index] = sampled_label_cloud
+        all_labels[index] = sampled_labels
+
+    return point_clouds, point_cloud_labels, all_labels
+
+def load_data(point_cloud_batch, label_cloud_batch, NUM_SAMPLE_POINTS=1024, LABELS=['wing', 'body', 'tail', 'engine']):
+    """
+    load randomly selected points from point cloud batch
+    Parameters: 
+        point_cloud_batch (np array): numpy array of each point cloud expreseed in (x, y, z) format
+        label_cloud_batch (int): label of point clouds to assign for augmented points
+        NUM_SAMPLE_POINTS (int): sample size by default which is 1024
+    Returns: 
+        sampled point_cloud_batch, sampled label_cloud_batch
+    """
+    point_cloud_batch.set_shape([NUM_SAMPLE_POINTS, 3])
+    label_cloud_batch.set_shape([NUM_SAMPLE_POINTS, len(LABELS) + 1])
+    return point_cloud_batch, label_cloud_batch
+
+def augment(point_cloud_batch, label_cloud_batch):
+    """
+    Augment each point cloud batch
+    Parameters: 
+        point_cloud_batch (np array): numpy array of each point cloud expreseed in (x, y, z) format
+        label_cloud_batch (int): label of point clouds to assign for augmented points
+    Returns: 
+        augmented point_cloud_batch, augmented label_cloud_batch
+    """
+    noise = tf.random.uniform(
+        tf.shape(label_cloud_batch), -0.005, 0.005, dtype=tf.float64
+    )
+    point_cloud_batch += noise[:, :, :3]
+    return point_cloud_batch, label_cloud_batch
+
+def generate_dataset(point_clouds, label_clouds, is_training=True, BATCH_SIZE=32):
+    """
+    Genarate Tensforflow Dataset for each point cloud followed by their respective labels
+    Parameters:
+        point_clouds (np array): numpy of each point in the point cloud
+        label_clouds (int): one hot encoded label for each point in the point cloud
+        is_training (bool): True if training or else False if prediction
+        BATCH_SIZE (int): batch size by default which is 32
+    Returns:
+
+    """
+    point_clouds=np.array([x for x in list(point_clouds)], dtype='float64')
+    label_clouds=np.array([x for x in list(label_clouds)], dtype='float32')
+
+    dataset = tf.data.Dataset.from_tensor_slices((point_clouds, label_clouds))
+    dataset = dataset.shuffle(BATCH_SIZE * 100) if is_training else dataset
+    dataset = dataset.map(load_data, num_parallel_calls=tf.data.AUTOTUNE)
+    dataset = dataset.batch(batch_size=BATCH_SIZE)
+    dataset = (
+        dataset.map(augment, num_parallel_calls=tf.data.AUTOTUNE)
+        if is_training
+        else dataset
+    )
+    return dataset
+
+def generate_segmentation_dataset(**kwargs):
+    """
+
+    """
+    point_clouds = kwargs.get('point_clouds')
+    point_cloud_labels = kwargs.get('point_cloud_labels')
+    VAL_SPLIT = kwargs.get('VAL_SPLIT')
+    BATCH_SIZE = kwargs.get('BATCH_SIZE')
+
+    split_index = int(len(point_clouds) * (1 - VAL_SPLIT))
+    train_point_clouds = point_clouds[:split_index]
+    train_label_cloud = point_cloud_labels[:split_index]
+    total_training_examples = len(train_point_clouds)
+
+    val_point_clouds = point_clouds[split_index:]
+    val_label_cloud = point_cloud_labels[split_index:]
+
+    print("Num train point clouds:", len(train_point_clouds))
+    print("Num train point cloud labels:", len(train_label_cloud))
+    print("Num val point clouds:", len(val_point_clouds))
+    print("Num val point cloud labels:", len(val_label_cloud))
+
+    train_dataset = generate_dataset(point_clouds=train_point_clouds, label_clouds=train_label_cloud)
+    val_dataset = generate_dataset(point_clouds=val_point_clouds, label_clouds=val_label_cloud, is_training=False, BATCH_SIZE=BATCH_SIZE)
+
+    print("Train Dataset:", train_dataset)
+    print("Validation Dataset:", val_dataset)
+
+    return train_dataset, val_dataset
 #endregion
