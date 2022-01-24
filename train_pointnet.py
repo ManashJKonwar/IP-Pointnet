@@ -8,9 +8,10 @@ __email__ = "rickykonwar@gmail.com"
 __status__ = "Development"
 
 import os, json
-import pickle
+import pickle, random
 from numpy import load, save
-from modelling_pipeline.preprocessing.data_preprocesser import augment_dataset, parse_dataset, parse_segmentation_dataset
+from modelling_pipeline.preprocessing.data_preprocesser import augment_dataset, parse_dataset, parse_segmentation_dataset, preprocess_segmentation_dataset, \
+                                                                generate_segmentation_dataset
 from modelling_pipeline.modelling.train_pointnet_classifier import generate_pointnet_model, train_pointnet_classifier
 from modelling_pipeline.utility.utility_datatransformation import download_dataset, generate_history_callback, save_model_weights 
 
@@ -110,30 +111,42 @@ if __name__ == '__main__':
 
         # Stucturing Dataset for this paprt segmnetation dataset by reading relevant point cloud data and 
         # point cloud labels
-        if not os.path.exists(r'modelling_pipeline\datasets\preprocessed\pointnet_part_segmenter\%s\point_cloud.npy' %(object_name.lower())) \
+        if not os.path.exists(r'modelling_pipeline\datasets\preprocessed\pointnet_part_segmenter\%s\point_clouds.npy' %(object_name.lower())) \
         or not os.path.exists(r'modelling_pipeline\datasets\preprocessed\pointnet_part_segmenter\%s\point_cloud_labels.npy' %(object_name.lower())) \
         or not os.path.exists(r'modelling_pipeline\datasets\preprocessed\pointnet_part_segmenter\%s\test_point_clouds.npy' %(object_name.lower())) \
         or not os.path.exists(r'modelling_pipeline\datasets\preprocessed\pointnet_part_segmenter\%s\all_labels.npy' %(object_name.lower())):
             if not os.path.exists(os.path.join('modelling_pipeline\datasets\preprocessed\pointnet_part_segmenter',object_name.lower())):
                 os.makedirs(os.path.join('modelling_pipeline\datasets\preprocessed\pointnet_part_segmenter',object_name.lower()))
 
-            point_cloud, point_cloud_labels, test_point_clouds, all_labels = parse_segmentation_dataset(dataset_directory=part_segmenter_dataset_directory,
-                                                                                                        points_dir = points_dir,
-                                                                                                        labels_dir = labels_dir,
-                                                                                                        VAL_SPLIT = VAL_SPLIT,
-                                                                                                        NUM_SAMPLE_POINTS = NUM_SAMPLE_POINTS,
-                                                                                                        BATCH_SIZE = BATCH_SIZE,
-                                                                                                        EPOCHS = EPOCHS,
-                                                                                                        INITIAL_LR = INITIAL_LR,
-                                                                                                        LABELS = LABELS,
-                                                                                                        COLORS = COLORS)
+            point_clouds, point_cloud_labels, test_point_clouds, all_labels = parse_segmentation_dataset(dataset_directory=part_segmenter_dataset_directory,
+                                                                                                        points_dir=points_dir,
+                                                                                                        labels_dir=labels_dir,
+                                                                                                        VAL_SPLIT=VAL_SPLIT,
+                                                                                                        NUM_SAMPLE_POINTS=NUM_SAMPLE_POINTS,
+                                                                                                        BATCH_SIZE=BATCH_SIZE,
+                                                                                                        EPOCHS=EPOCHS,
+                                                                                                        INITIAL_LR=INITIAL_LR,
+                                                                                                        LABELS=LABELS,
+                                                                                                        COLORS=COLORS)
 
-            save(r'modelling_pipeline\datasets\preprocessed\pointnet_part_segmenter\%s\point_cloud.npy' %(object_name.lower()) , point_cloud)
+            save(r'modelling_pipeline\datasets\preprocessed\pointnet_part_segmenter\%s\point_clouds.npy' %(object_name.lower()) , point_clouds)
             save(r'modelling_pipeline\datasets\preprocessed\pointnet_part_segmenter\%s\point_cloud_labels.npy' %(object_name.lower()), point_cloud_labels)
             save(r'modelling_pipeline\datasets\preprocessed\pointnet_part_segmenter\%s\test_point_clouds.npy' %(object_name.lower()), test_point_clouds)
             save(r'modelling_pipeline\datasets\preprocessed\pointnet_part_segmenter\%s\all_labels.npy' %(object_name.lower()), all_labels)
         else:
-            point_cloud = load(r'modelling_pipeline\datasets\preprocessed\pointnet_part_segmenter\%s\point_cloud.npy' %(object_name.lower()), allow_pickle=True)
+            point_clouds = load(r'modelling_pipeline\datasets\preprocessed\pointnet_part_segmenter\%s\point_clouds.npy' %(object_name.lower()), allow_pickle=True)
             point_cloud_labels = load(r'modelling_pipeline\datasets\preprocessed\pointnet_part_segmenter\%s\point_cloud_labels.npy' %(object_name.lower()), allow_pickle=True)
             test_point_clouds = load(r'modelling_pipeline\datasets\preprocessed\pointnet_part_segmenter\%s\test_point_clouds.npy' %(object_name.lower()), allow_pickle=True)
             all_labels = load(r'modelling_pipeline\datasets\preprocessed\pointnet_part_segmenter\%s\all_labels.npy' %(object_name.lower()), allow_pickle=True)
+        
+        # Preprocess the point cloud to perform random batching and also performing normalization on top of that
+        point_clouds, point_cloud_labels, all_labels = preprocess_segmentation_dataset(point_clouds=point_clouds,
+                                                                                    point_cloud_labels=point_cloud_labels,
+                                                                                    all_labels=all_labels,
+                                                                                    NUM_SAMPLE_POINTS=NUM_SAMPLE_POINTS)
+        
+        # Data Augmentation to convert the numpy arrays of train and test dataset into tensorflow based dataset format
+        train_dataset, validation_dataset = generate_segmentation_dataset(point_clouds=point_clouds,
+                                                                        point_cloud_labels=point_cloud_labels,
+                                                                        VAL_SPLIT=VAL_SPLIT,
+                                                                        BATCH_SIZE=BATCH_SIZE)
