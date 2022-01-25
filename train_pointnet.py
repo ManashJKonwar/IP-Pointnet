@@ -13,6 +13,7 @@ from numpy import load, save
 from modelling_pipeline.preprocessing.data_preprocesser import augment_dataset, parse_dataset, parse_segmentation_dataset, preprocess_segmentation_dataset, \
                                                                 generate_segmentation_dataset
 from modelling_pipeline.modelling.train_pointnet_classifier import generate_pointnet_model, train_pointnet_classifier
+from modelling_pipeline.modelling.train_pointnet_part_segmenter import generate_pointnet_segmentation_model, generate_pointnet_segmentation_lr_schedule, train_pointnet_segmenter
 from modelling_pipeline.utility.utility_datatransformation import download_dataset, generate_history_callback, save_model_weights 
 
 if __name__ == '__main__':
@@ -146,7 +147,36 @@ if __name__ == '__main__':
                                                                                     NUM_SAMPLE_POINTS=NUM_SAMPLE_POINTS)
         
         # Data Augmentation to convert the numpy arrays of train and test dataset into tensorflow based dataset format
-        train_dataset, validation_dataset = generate_segmentation_dataset(point_clouds=point_clouds,
-                                                                        point_cloud_labels=point_cloud_labels,
-                                                                        VAL_SPLIT=VAL_SPLIT,
-                                                                        BATCH_SIZE=BATCH_SIZE)
+        train_dataset, validation_dataset, total_training_examples = generate_segmentation_dataset(point_clouds=point_clouds,
+                                                                                                point_cloud_labels=point_cloud_labels,
+                                                                                                VAL_SPLIT=VAL_SPLIT,
+                                                                                                BATCH_SIZE=BATCH_SIZE)
+        
+        x, y = next(iter(train_dataset))
+        num_points = x.shape[1]
+        num_classes = y.shape[-1]
+
+        # Generate the Segmentation Point Net Model Architecture
+        segmentation_pointnet_model = generate_pointnet_segmentation_model(num_points=num_points,
+                                                                        num_classes=num_classes)
+
+        # Generate the Segmentation Point Net Model History Callback Logger
+        segmentation_pointnet_history_logger = generate_history_callback(history_file_name='pointnet_part_segmenter_history.csv',
+                                                                        history_path_to_save=r'modelling_pipeline\models')
+
+        # Learning Rate Schedule
+        segmentation_lr_schedule = generate_pointnet_segmentation_lr_schedule(total_training_examples=total_training_examples,
+                                                                            BATCH_SIZE=BATCH_SIZE,
+                                                                            EPOCHS=EPOCHS,
+                                                                            INITIAL_LR=INITIAL_LR)
+
+        # Train the Segmentation Point Net Model 
+        trained_segmentation_pointnet_model = train_pointnet_segmenter(model=segmentation_pointnet_model, 
+                                                                    train_dataset=train_dataset, 
+                                                                    test_dataset=validation_dataset,
+                                                                    model_history_logger=segmentation_pointnet_history_logger,
+                                                                    lr_schedule=segmentation_lr_schedule,
+                                                                    epochs=EPOCHS)
+        
+        # Save Trained Segmentation Point Net Model Weights
+        save_model_weights(model=trained_segmentation_pointnet_model, model_name = 'pointnet_part_segmenter_%s.h5' %(str(object_name.lower())), path_to_save=r'modelling_pipeline\models')
