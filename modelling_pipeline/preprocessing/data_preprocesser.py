@@ -275,5 +275,5 @@ def generate_segmentation_dataset(**kwargs):
     print("Train Dataset:", train_dataset)
     print("Validation Dataset:", val_dataset)
 
-    return train_dataset, val_dataset
+    return train_dataset, val_dataset, total_training_examples
 #endregion
