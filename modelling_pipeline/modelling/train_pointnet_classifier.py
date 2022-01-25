@@ -97,8 +97,8 @@ def generate_pointnet_model(num_points=2048, num_classes=10):
         model = keras.Model(inputs=inputs, outputs=outputs, name="pointnet")
         model.summary()
         return model
-    except Exception:
-        print('Caught Exception while Generating Pointnet Model Architecture', exc_info=True)
+    except Exception as ex:
+        print('Caught Exception while Generating Pointnet Model Architecture: %s' %(str(ex)))
 
 def train_pointnet_classifier(model=None, train_dataset=None, test_dataset=None, model_history_logger=None):
     try:
@@ -109,8 +109,7 @@ def train_pointnet_classifier(model=None, train_dataset=None, test_dataset=None,
                 optimizer=keras.optimizers.Adam(learning_rate=0.001),
                 metrics=["sparse_categorical_accuracy"],
             )
-            # model.fit(train_dataset, epochs=1, callbacks=[model_history_logger], validation_data=test_dataset)
             model.fit(train_dataset, epochs=20, callbacks=[model_history_logger], validation_data=test_dataset)
             return model
-    except Exception:
-        print('Cught Exception while training the Pointnet Model', exc_info=True)
+    except Exception as ex:
+        print('Caught Exception while training the Pointnet Model: %s' %(str(ex)))
