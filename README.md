@@ -1,5 +1,6 @@
 # Pointnet Implementation Using TF2
-> The entire reporsitory covers 2 aspects - firstly implemnetation of pointnet architecture to classify objects, perform part segmentation and also to perform semantic segmentation, secondly it helps us to visualize the data around these pointnet architecture and perform prediction pipeline on test datasets using DASH Framework
+> The entire reporsitory covers 2 aspects - firstly implemnetation of pointnet architecture to classify objects, perform part segmentation and also to perform semantic segmentation, secondly it helps us to visualize the data around these pointnet architecture and perform prediction pipeline on test datasets using DASH Framework. The modeelling aspect is done by utilizing tensorflow 2 and code waork is completed by using keras.
+
 > Live demo [_here_](https://www.example.com). <!-- If you have the project hosted somewhere, include the link here. -->
 
 ## Table of Contents
@@ -11,66 +12,71 @@
 * [Usage](#usage)
 * [Project Status](#project-status)
 * [Room for Improvement](#room-for-improvement)
+* [References](#references)
 * [Acknowledgements](#acknowledgements)
 * [Contact](#contact)
 <!-- * [License](#license) -->
 
 ## General Information
-- Provide general information about your project here.
-- What problem does it (intend to) solve?
-- What is the purpose of your project?
-- Why did you undertake it?
+- The aim of this repository is to implement Pointnet Architecture on readily available 3d datasets and also to create interactive visualizations in DASH
+- The repository helps Deep Learning enthusiasts to implement pointnet architecture by working on generating training pipeline and inference pipeline separately. It also introduces them to the power of building web interactive apps using DASH as primary framework and also will teach them to structure code around web applications.
+- Understand Pointnet Architecture and develop POC around research papers from main authors of Pointnet Architecture.
+- Implement Pointnet for developing a 3d classifier, 3d part segmenter and 3d semantic segmenter.
 <!-- You don't have to answer all the questions - just the ones relevant to your project. -->
 
 ## Technologies Used
-- Tech 1 - version 1.0
-- Tech 2 - version 2.0
-- Tech 3 - version 3.0
+- Tensorflow2
+- Keras
+- Dash 
 
 ## Features
 List the ready features here:
-- Awesome feature 1
-- Awesome feature 2
-- Awesome feature 3
+- Training and Inferencing Pointnet Classifier - Done
+- Training and Inferencing Pointnet Part Segmenter - In Progress
+- Training and Inferencing Pointnet Semantic Segmenter - To Be Started
 
 ## Screenshots
 ![Example screenshot](./img/screenshot.png)
 <!-- If you have screenshots you'd like to share, include them here. -->
 
-## Setup
-What are the project requirements/dependencies? Where are they listed? A requirements.txt or a Pipfile.lock file perhaps? Where is it located?
-
-Proceed to describe how to install / setup one's local environment / get started with the project.
+## Setup:
+- git clone https://github.com/ManashJKonwar/IP-Pointnet.git (Clone the repository)
+- python3 -m venv IPPointnetVenv (Create virtual environment from existing python3)
+- activate the "IPPointnetVenv" (Activating the virtual environment)
+- pip install -r requirements.txt (Install all required python modules)
 
 ## Usage
-How does one go about using it?
-Provide various use cases and code examples here.
-
-`write-your-code-here`
+### For Training PointNet:
+- python train_pointnet.py
+### For Running Web Application:
+- python index.py
 
 ## Project Status
-Project is: _in progress_ / _complete_ / _no longer being worked on_. If you are no longer working on it, provide reasons why.
+Project is: __in progress_ 
+<!-- / _complete_ / _no longer being worked on_. If you are no longer working on it, provide reasons why._ -->
 
 ## Room for Improvement
-Include areas you believe need improvement / could be improved. Also add TODOs for future development.
-
 Room for improvement:
-- Improvement to be done 1
-- Improvement to be done 2
+- Build a generic classifier for custom 3d dataset
+- Build a generic part segmenter for custom 3d dataset
+- Build a generic semantic segmenter for custom 3d dataset
+- Develop frontend to encompass this generic nature
+- Porvide support for CPUs, GPUs and TPUs as well
 
 To do:
-- Feature to be added 1
-- Feature to be added 2
+- Finish developing inference end of part segmenter at DASH end
+- Start developing semantic segmenter
+
+## References
+[1] PointNet: Deep Learning on Point Sets for 3D Classification and Segmentation; Charles R. Qi, Hao Su, Kaichun Mo, Leonidas J. Guibas;
+CVPR 2017; https://arxiv.org/abs/1612.00593.
 
 ## Acknowledgements
-Give credit here.
-- This project was inspired by...
-- This project was based on [this tutorial](https://www.example.com).
-- Many thanks to...
+- This project was based on [Point cloud classification with PointNet](https://keras.io/examples/vision/pointnet/).
+- This project was based on [Point cloud segmentation with PointNet](https://keras.io/examples/vision/pointnet_segmentation/).
 
 ## Contact
-Created by [@ManashJKonwar](https://www.flynerd.pl/) - feel free to contact me!
-
+Created by [@ManashJKonwar](https://github.com/ManashJKonwar) - feel free to contact me!
 
 <!-- Optional -->
 <!-- ## License -->
