@@ -19,6 +19,7 @@ import pandas as pd
 from numpy import save, load
 from tensorflow import keras
 from modelling_pipeline.modelling.train_pointnet_classifier import generate_pointnet_model
+from modelling_pipeline.modelling.train_pointnet_part_segmenter import generate_pointnet_segmentation_model
 
 #region Pointnet Classifier
 NUM_POINTS = 2048
@@ -78,7 +79,7 @@ def load_classifier_model(model_wts_filename=None):
     trained_classifier_model = None
     if os.path.exists(model_wts_filename):
         trained_classifier_model = generate_pointnet_model(num_points=NUM_POINTS,
-                                                        num_classes=NUM_CLASSES)
+                                                            num_classes=NUM_CLASSES)
         trained_classifier_model.load_weights(model_wts_filename)
     
     return trained_classifier_model
@@ -86,7 +87,7 @@ def load_classifier_model(model_wts_filename=None):
 trained_classifier_model = None
 trained_classifier_model = load_classifier_model(model_wts_filename=r'modelling_pipeline\models\pointnet_classifier_10cls.h5')
 
-def load_training_history(model_history_filename=None):
+def load_classifier_training_history(model_history_filename=None):
     trained_classifier_history = None
     if os.path.exists(model_history_filename):
         trained_classifier_history = pd.read_csv(model_history_filename)
@@ -94,7 +95,7 @@ def load_training_history(model_history_filename=None):
     return trained_classifier_history
 
 trained_classifier_history = None
-trained_classifier_history = load_training_history(model_history_filename=r'modelling_pipeline\models\pointnet_classifier_10cls_history.csv')
+trained_classifier_history = load_classifier_training_history(model_history_filename=r'modelling_pipeline\models\pointnet_classifier_10cls_history.csv')
 #endregion
 
 #region Pointnet Part Segmenter
@@ -210,4 +211,26 @@ else:
     point_cloud_labels = load(r'dash_pipeline\datasets\pointnet_part_segmenter\%s\point_cloud_labels.npy' %(object_name.lower()), allow_pickle=True)
     test_point_clouds = load(r'dash_pipeline\datasets\pointnet_part_segmenter\%s\test_point_clouds.npy' %(object_name.lower()), allow_pickle=True)
     all_labels = load(r'dash_pipeline\datasets\pointnet_part_segmenter\%s\all_labels.npy' %(object_name.lower()), allow_pickle=True)
+
+def load_part_segmenter_model(model_wts_filename=None):
+    trained_part_segmenter_model = None
+    if os.path.exists(model_wts_filename):
+        trained_part_segmenter_model = generate_pointnet_segmentation_model(num_points=1024,
+                                                                            num_classes=5)
+        trained_part_segmenter_model.load_weights(model_wts_filename)
+    
+    return trained_part_segmenter_model
+
+trained_part_segmenter_model = None
+trained_part_segmenter_model = load_part_segmenter_model(model_wts_filename=r'modelling_pipeline\models\pointnet_part_segmenter_airplane.h5')
+
+def load_part_segmenter_training_history(model_history_filename=None):
+    trained_part_segmenter_history = None
+    if os.path.exists(model_history_filename):
+        trained_part_segmenter_history = pd.read_csv(model_history_filename)
+
+    return trained_part_segmenter_history
+
+trained_part_segmenter_history = None
+trained_part_segmenter_history = load_part_segmenter_training_history(model_history_filename=r'modelling_pipeline\models\pointnet_part_segmenter_history.csv')
 #endregion
