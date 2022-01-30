@@ -11,7 +11,7 @@ import dash_bootstrap_components as dbc
 from dash import html
 from dash.dependencies import Input, Output
 from dash_pipeline.calback_manager import CallbackManager
-from dash_pipeline.layouts import layout_mainframe, layout_pointnet_classifier   
+from dash_pipeline.layouts import layout_mainframe, layout_pointnet_classifier, layout_pointnet_part_segmenter   
 
 callback_manager = CallbackManager()
 
@@ -24,7 +24,7 @@ def render_page_content(pathname):
     elif pathname == "/pointnet-classification":
         return layout_pointnet_classifier.layout
     elif pathname == "/pointnet-part-segmentation": 
-        return html.P("This is pointnet part segmentation page!")
+        return layout_pointnet_part_segmenter.layout
     elif pathname == "/pointnet-semantic-segmentation":
         return html.P("This is pointnet semantic segmentation page!")
     # If the user tries to reach a different page, return a 404 message
