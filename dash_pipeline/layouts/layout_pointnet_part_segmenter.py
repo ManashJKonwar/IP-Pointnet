@@ -85,8 +85,8 @@ layout = html.Div(
                                         html.Div(children=["Model Selection:"]),
                                         dcc.Dropdown(
                                             id="pps-dropdown-model-selection",
-                                            options = [{'label': classifier_item, 'value': classifier_item} for classifier_item in ['pointnet_10cls_20epochs']],
-                                            value='pointnet_10cls_20epochs',
+                                            options = [{'label': classifier_item, 'value': classifier_item} for classifier_item in ['pointnet_airplane_ps_60epochs']],
+                                            value='pointnet_airplane_ps_60epochs',
                                             clearable=False,
                                         ),
                                     ],
