@@ -124,8 +124,8 @@ layout = html.Div(
                                                 html.Div(children=["Class Selection:"]),
                                                 dcc.Dropdown(
                                                     id="pps-dropdown-class-selection",
-                                                    options = [{'label': class_item.capitalize(), 'value': class_item} for class_item in class_map.values()],
-                                                    value=list(class_map.values())[0],
+                                                    options = [{'label': class_item.capitalize(), 'value': class_item} for class_item in [object_name]],
+                                                    value=object_name,
                                                     clearable=False,
                                                 ),
                                             ],
