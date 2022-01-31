@@ -8,6 +8,7 @@ __email__ = "rickykonwar@gmail.com"
 __status__ = "Development"
 
 import dash
+import numpy as np
 import pandas as pd
 import tensorflow as tf
 import plotly.express as px
@@ -24,6 +25,9 @@ from dash_pipeline.backend import trained_classifier_model, class_map, trained_c
 
 callback_manager = CallbackManager()
 
+"""
+Callback for Learn More Button for classifier
+"""
 @callback_manager.callback(Output(component_id='modal', component_property='is_open'),
                         [Input(component_id='learn-more-button', component_property='n_clicks'), 
                         Input(component_id='classifier-modal-close', component_property='n_clicks')],
@@ -41,6 +45,10 @@ def update_click_output(button_click, close_click, is_open):
     else:
         return is_open
 
+"""
+Callback for plotting training and validation 
+data during classifier training
+"""
 @callback_manager.callback(Output(component_id='model-training-history', component_property='figure'),
                         Input(component_id='dropdown-model-selection', component_property='value'))
 def update_training_characteristics(selected_model):
@@ -66,7 +74,10 @@ def update_training_characteristics(selected_model):
     else:
         return dash.no_update
 
-
+"""
+Callback for labelling prediction and validation data 
+based on trained classifier model
+"""
 @callback_manager.callback(Output(component_id='div-detection-mode', component_property='children'),
                         Input(component_id='dropdown-image-selection', component_property='value'),
                         State(component_id='dropdown-class-selection', component_property='value'))
@@ -104,6 +115,10 @@ def update_detection_mode(image_value, class_value):
         )
     ]
 
+"""
+Callback for populating dropdown for image labels
+in specific class under classifier model
+"""
 @callback_manager.callback([Output(component_id='dropdown-image-selection', component_property='options'),
                         Output(component_id='dropdown-image-selection', component_property='value')],
                         Input(component_id='dropdown-class-selection', component_property='value'))
@@ -118,6 +133,10 @@ def update_image_selection_options(class_value):
     else:
         return dash.no_update, dash.no_update
 
+"""
+Callback for plotting prediction and validation data 
+based on trained classifier
+"""
 @callback_manager.callback(Output(component_id='model-output', component_property='figure'),
                         Input(component_id='dropdown-image-selection', component_property='value'),
                         State(component_id='dropdown-class-selection', component_property='value'))
