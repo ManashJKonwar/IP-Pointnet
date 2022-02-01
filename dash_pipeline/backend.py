@@ -71,7 +71,7 @@ if not os.path.exists(os.path.join(pps_dataset_path, 'element_spec')):
     if not os.path.exists(os.path.join('dash_pipeline\datasets\pointnet_part_segmenter',object_name.lower())):
         os.makedirs(os.path.join('dash_pipeline\datasets\pointnet_part_segmenter',object_name.lower()))
 
-    validation_dataset = load_segmentation_dataset(dataset_directory=PART_SEGMENTER_DATA_DIR,
+    pps_validation_dataset = load_segmentation_dataset(dataset_directory=PART_SEGMENTER_DATA_DIR,
                                                 points_dir=points_dir,
                                                 labels_dir=labels_dir,
                                                 VAL_SPLIT=VAL_SPLIT,
@@ -82,17 +82,17 @@ if not os.path.exists(os.path.join(pps_dataset_path, 'element_spec')):
                                                 LABELS=LABELS,
                                                 COLORS=COLORS)
     tf.data.experimental.save(
-        validation_dataset, 
+        pps_validation_dataset, 
         pps_dataset_path, 
         compression='GZIP'
     )
     with open(os.path.join(pps_dataset_path, 'element_spec'), 'wb') as out_:  # also save the element_spec to disk for future loading
-        pickle.dump(validation_dataset.element_spec, out_)
+        pickle.dump(pps_validation_dataset.element_spec, out_)
 else:
     with open(os.path.join(pps_dataset_path, 'element_spec'), 'rb') as in_:
         es = pickle.load(in_)
 
-    validation_dataset = tf.data.experimental.load(
+    pps_validation_dataset = tf.data.experimental.load(
                             pps_dataset_path, 
                             es, 
                             compression='GZIP'
