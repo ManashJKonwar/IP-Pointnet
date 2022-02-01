@@ -161,7 +161,7 @@ if __name__ == '__main__':
                                                                         num_classes=num_classes)
 
         # Generate the Segmentation Point Net Model History Callback Logger
-        segmentation_pointnet_history_logger = generate_history_callback(history_file_name='pointnet_part_segmenter_history.csv',
+        segmentation_pointnet_history_logger = generate_history_callback(history_file_name='pointnet_part_segmenter_history_%s.csv' %(str(object_name.lower())),
                                                                         history_path_to_save=r'modelling_pipeline\models')
 
         # Learning Rate Schedule

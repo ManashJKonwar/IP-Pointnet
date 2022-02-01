@@ -55,7 +55,6 @@ EPOCHS = 60
 INITIAL_LR = 1e-3
 PART_SEGMENTER_DATA_DIR = r'modelling_pipeline\datasets\PartAnnotation'
 object_name='Airplane'
-PART_SEGMENTER_DICT={}
 
 with open(os.path.join(PART_SEGMENTER_DATA_DIR,'metadata.json')) as json_file:
     metadata = json.load(json_file)
@@ -99,8 +98,8 @@ else:
                         )
 
 trained_part_segmenter_model = None
-trained_part_segmenter_model = load_part_segmenter_model(model_wts_filename=r'modelling_pipeline\models\pointnet_part_segmenter_airplane.h5')
+trained_part_segmenter_model = load_part_segmenter_model(model_wts_filename=r'modelling_pipeline\models\pointnet_part_segmenter_%s.h5' %(str(object_name.lower())))
 
 trained_part_segmenter_history = None
-trained_part_segmenter_history = load_part_segmenter_training_history(model_history_filename=r'modelling_pipeline\models\pointnet_part_segmenter_history.csv')
+trained_part_segmenter_history = load_part_segmenter_training_history(model_history_filename=r'modelling_pipeline\models\pointnet_part_segmenter_history_%s.csv' %(str(object_name.lower())))
 #endregion
