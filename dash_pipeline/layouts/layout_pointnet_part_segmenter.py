@@ -71,12 +71,14 @@ layout = html.Div(
                                     children=[
                                         html.H4("Pointnet Part Segmenter Explorer"),
                                         html.P(
-                                            "To get started, select the footage you want to view, and choose the display mode (with or without "
-                                            "bounding boxes). Then, you can start playing the video, and the result of objects detected "
-                                            "will be displayed in accordance to the current video-playing time."
+                                            "To get started, select the object category and choose the image no after that, you will be able to see " 
+                                            "the pointnet part segmenter structure of the same in the graphical area, further the groundtruth and prediction "
+                                            "plots could be observed in the right bottom corner of your screen. You can also see the model training characteristics "
+                                            "on the right top corner of your screen. Select the appropriate model type after training the pointnet part segmenter "
+                                            "model"
                                         ),
                                         html.Button(
-                                            "Learn More", id="pps-learn-more-button", n_clicks=0
+                                            "Learn Part Segmenter", id="pps-learn-more-button", n_clicks=0
                                         ),
                                     ],
                                 ),
