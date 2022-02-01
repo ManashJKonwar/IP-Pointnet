@@ -26,6 +26,8 @@
 <!-- You don't have to answer all the questions - just the ones relevant to your project. -->
 ![Pointnet Model Architecture](./repo_assets/PointNet_Architecture.jpg)
 
+- Please do refer to the Learn More Sections in each page of the web application to deep dive into each of this case studies.
+
 ## Technologies Used
 - Tensorflow2
 - Keras
@@ -48,7 +50,16 @@ List the ready features here:
 - pip install -r requirements.txt (Install all required python modules)
 
 ## Dataset Utilized:
-- 
+- [PointNet Classifier](http://3dvision.princeton.edu/projects/2014/3DShapeNets/)
+Credit goes to [ModelNet 10 dataset](http://modelnet.cs.princeton.edu/) which contains CAD Models from 10 common categories. This is actually a subset of ModelNet 40 dataset.
+Each of the point under each object category consist of labelling as to which object category it belongs and this information helps us greatly to perform training as well as validation 
+runs.
+- [Pointnet Part Segmenter](http://3dvision.princeton.edu/projects/2014/3DShapeNets/)
+Credit goes to [ShapeNet dataset](https://shapenet.org/). Its an ongoing effort to establish a richly-annotated, large-scale dataset of 3D shapes. ShapeNetCore is a subset of the 
+full ShapeNet dataset with clean single 3D models and manually verified category and alignment annotations. It covers 55 common object categories, with about 51,300 unique 3D models.
+I have utilized only 12 object categories of PASCAL 3D+, included as part of the ShapenetCore dataset and each of this category contains part level labelling for perform training as 
+well as validation runs
+
 
 ## Usage
 ### For Training PointNet:
