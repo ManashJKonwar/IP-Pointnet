@@ -24,7 +24,7 @@
 - Understand Pointnet Architecture and develop POC around research papers from main authors of Pointnet Architecture.
 - Implement Pointnet for developing a 3d classifier, 3d part segmenter and 3d semantic segmenter.
 <!-- You don't have to answer all the questions - just the ones relevant to your project. -->
-![Pointnet Model Architecture](repo_assets\PointNet_Architecture.jpg)
+![Pointnet Model Architecture](./repo_assets/PointNet_Architecture.jpg)
 
 ## Technologies Used
 - Tensorflow2
@@ -38,8 +38,8 @@ List the ready features here:
 - Training and Inferencing Pointnet Semantic Segmenter - To Be Started
 
 ## Screenshots
-![Pointnet Classifier Frontend](repo_assets\Pointnet_Classifier_Frontend.jpeg)
-![Pointnet Part Segmenter Frontend](repo_assets\Pointnet_Part_Segmenter_Frontend.jpeg)
+![Pointnet Classifier Frontend](./repo_assets/Pointnet_Classifier_Frontend.jpeg)
+![Pointnet Part Segmenter Frontend](./repo_assets/Pointnet_Part_Segmenter_Frontend.jpeg)
 
 ## Setup:
 - git clone https://github.com/ManashJKonwar/IP-Pointnet.git (Clone the repository)
