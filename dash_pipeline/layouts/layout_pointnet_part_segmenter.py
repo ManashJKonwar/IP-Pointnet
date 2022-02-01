@@ -93,9 +93,19 @@ layout = html.Div(
                                 ),
                                 html.Div(
                                     dcc.Loading(
-                                        dcc.Graph(id='pps-model-output', style={"height": "70vh"}),
+                                        children=[
+                                            dbc.Row([
+                                                dbc.Col(
+                                                    dcc.Graph(id='pps-model-output-groundtruth', style={"height": "70vh"})
+                                                ),
+                                                dbc.Col(
+                                                    dcc.Graph(id='pps-model-output-prediction', style={"height": "70vh"})
+                                                )
+                                            ])
+                                        ],
                                         type="cube",
                                     )
+
                                 ),
                                 html.Div(
                                     children=[

@@ -90,7 +90,8 @@ def update_image_selection_options(object_category):
 Callback for plotting prediction and validation data 
 based on trained part segmenter
 """
-@callback_manager.callback(Output(component_id='pps-model-output', component_property='figure'),
+@callback_manager.callback([Output(component_id='pps-model-output-groundtruth', component_property='figure'),
+                        Output(component_id='pps-model-output-prediction', component_property='figure')],
                         Input(component_id='pps-dropdown-image-selection', component_property='value'),
                         State(component_id='pps-dropdown-class-selection', component_property='value'))
 def update_part_segmenter_results(image_value, object_category):
@@ -120,24 +121,18 @@ def update_part_segmenter_results(image_value, object_category):
                                 "y": point_cloud[:, 1],
                                 "z": point_cloud[:, 2],
                                 "label": [label_map[np.argmax(label)] for label in label_cloud],
-                                'marker_size': 2.0
+                                'marker_size': 3.0
                             }
                         )
 
-            return px.scatter_3d(df_point, x='x', y='y', z='z', size='marker_size', size_max=5)
-
-        fig = make_subplots(rows=2, cols=1)
+            return px.scatter_3d(df_point, x='x', y='y', z='z', color='label', size='marker_size', size_max=5)
 
         # Plotting with ground-truth.
-        fig.append_trace(visualize_single_point_cloud(validation_batch[0], validation_batch[1], idx),
-                        row=1,
-                        col=1)
+        ground_truth_fig = visualize_single_point_cloud(validation_batch[0], validation_batch[1], idx)
 
         # Plotting with predicted labels.
-        fig.append_trace(visualize_single_point_cloud(validation_batch[0], val_predictions, idx),
-                        row=1,
-                        col=2)
+        prediction_fig = visualize_single_point_cloud(validation_batch[0], val_predictions, idx)
         
-        return fig
+        return ground_truth_fig, prediction_fig
     else:
         return dash.no_update
