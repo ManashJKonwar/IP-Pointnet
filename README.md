@@ -36,7 +36,7 @@
 ## Features
 List the ready features here:
 - Training and Inferencing Pointnet Classifier - Done
-- Training and Inferencing Pointnet Part Segmenter - In Progress
+- Training and Inferencing Pointnet Part Segmenter - Done
 - Training and Inferencing Pointnet Semantic Segmenter - To Be Started
 
 ## Screenshots
