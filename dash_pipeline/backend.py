@@ -9,11 +9,22 @@ __status__ = "Development"
 
 import os 
 import json
+import base64
 import pickle
+import pathlib
 import tensorflow as tf
 from numpy import save, load
 from dash_pipeline.utility.utility_pointnet_classifier import load_classifier_dataset, load_classifier_model, load_classifier_training_history
 from dash_pipeline.utility.utility_pointnet_part_segmenter import load_segmentation_dataset, load_part_segmenter_model, load_part_segmenter_training_history
+
+#region Image Reading
+image_dict={}
+image_dir = r'dash_pipeline\assets'
+for png_image in list(pathlib.Path(image_dir).glob('*.png')):
+    print(png_image)
+    if png_image.stem not in image_dict.keys():
+        image_dict[png_image.stem.lower()] = base64.b64encode(open(os.path.join(image_dir, png_image.name), 'rb').read())
+#endregion
 
 #region Pointnet Classifier
 NUM_POINTS = 2048
