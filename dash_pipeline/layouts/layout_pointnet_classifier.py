@@ -13,35 +13,68 @@ from dash import html
 from textwrap import dedent
 from dash_pipeline.backend import *
 
-def classifier_modal():
+def classifier_modal_old():
     return html.Div([
                 dbc.Modal(
                     [
-                        dbc.ModalHeader("HEADER"),
+                        dbc.ModalHeader("UNDERSTANDING POINTNET CLASSIFIER"),
                         dbc.ModalBody(
-                                html.Div(
-                                    children=[
-                                        dcc.Markdown(
-                                            children=dedent(
-                                                """
-                                            ##### What am I looking at?
-                                            
-                                            This app enhances visualization of objects detected using state-of-the-art Pointnet Classification.
-                                            Most user generated videos are dynamic and fast-paced, which might be hard to interpret. A confidence
-                                            heatmap stays consistent through the video and intuitively displays the model predictions. The pie chart
-                                            lets you interpret how the object classes are divided, which is useful when analyzing videos with numerous
-                                            and differing objects.
-                                            ##### More about this Dash app
-                                            
-                                            The purpose of this demo is to explore alternative visualization methods for object detection. Therefore,
-                                            the visualizations, predictions and videos are not generated in real time, but done beforehand. To read
-                                            more about it, please visit the [project repo](https://github.com/plotly/dash-sample-apps/tree/master/apps/dash-object-detection).
-                                            """
-                                            )
+                            html.Div(
+                                # children=[
+                                    dcc.Markdown(
+                                        '''
+                                        ## What are you looking at?
+                                        
+                                        This app helps us to visualize pointnet objects and also helps us in running predictions for them.
+                                        Classification, detection and segmentation of unordered 3D point sets i.e. point clouds is a core problem in computer vision. 
+                                        This case study implements the seminal point cloud deep learning paper PointNet (Qi et al., 2017). 
+                                        
+                                        ## Dataset Utilzation and Data Transformation:
+                                        ***
+
+                                        Please refer to the pointers below:
+                                        
+                                        1. Once the ModelNet 10 dataset is downloaded, we parse each of the data folders. Each of this file is loaded and further sampled into  
+                                        a point cloud before further converting them to numpy array. Along with the pointcloud representation, we also store the object label of each object  
+                                        into a dictionary and utilize it as part of prediction pipeline.
+                                        2. Set Global Parameters required for training such as  
+                                        &nbsp;&nbsp;&nbsp;&nbsp; NUM_POINTS -> Number of points to sample for each object under each class.  
+                                        &nbsp;&nbsp;&nbsp;&nbsp; NUM_CLASSES -> Total number of object classes to be considered for training the classifier.  
+                                        &nbsp;&nbsp;&nbsp;&nbsp; BATCH_SIZE -> Number of samples that will be propagated through the network.  
+                                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Advantages of using a batch size < number of all samples:  
+                                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp a. It requires less memory. Since you train the network using fewer samples, the overall training procedure requires less memory.  
+                                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp That's especially important if you are not able to fit the whole dataset in your machine's memory.  
+                                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp b. Typically networks train faster with mini-batches. That's because we update the weights after each propagation. In our example we've  
+                                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp propagated 32 batches (32 of them had 32 samples) and after each of them we've updated our network's parameters.  
+                                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp If we used all samples during propagation we would make only 1 update for the network's parameter.  
+                                        3. Data Augmentation is a very crucial step for training pipeline as it increases the total sample size and also help us to treat difefrent point cloud  
+                                        scenarios.  
+                                        4. Next Step would be to build the pointnet model in keras based on the Architecture defined in original journal paper. 
+
+                                        ## Model Building
+                                        ***
+
+                                        ![pointnet_classifier]](data:image/png;base64,%s)
+
+                                        &nbsp;&nbsp;&nbsp;&nbsp; In the classifier architecture above, Each convolution and fully-connected layer (with exception for end layers) consists of  
+                                        Convolution / Dense -> Batch Normalization -> ReLU Activation.
+
+                                        ![pointnet_classifier_cl_fc]](data:image/png;base64,%s)
+
+                                        ##### More about this Dash app
+                                        
+                                        The purpose of this demo is to explore alternative visualization methods for object detection. Therefore,
+                                        the visualizations, predictions and videos are not generated in real time, but done beforehand. To read
+                                        more about it, please visit the [project repo](https://github.com/plotly/dash-sample-apps/tree/master/apps/dash-object-detection).
+                                        '''
+                                        %(
+                                        image_dict['pointnet_classifier'].decode(),
+                                        image_dict['pointnet_classifier_cl_fc'].decode()
                                         )
-                                    ],
-                                ),
-                                style={"height": "30vh"}
+                                    )
+                                # ]
+                            ),
+                            style={"height": "70vh"}
                         ),
                         dbc.ModalFooter(
                             dbc.Button("CLOSE BUTTON", id="classifier-modal-close", className="ml-auto")
@@ -58,6 +91,93 @@ def classifier_modal():
                     # style={"max-width": "none", "width": "50%"}
                 )
             ])
+
+def classifier_modal():
+    return html.Div([
+                dbc.Modal(
+                    [
+                        dbc.ModalHeader("UNDERSTANDING POINTNET CLASSIFIER"),
+                        dbc.ModalBody(
+                            html.Div([
+                                    dcc.Markdown(
+                                        '''
+                                        ## What are you looking at?
+                                        
+                                        This app helps us to visualize pointnet objects and also helps us in running predictions for them.
+                                        Classification, detection and segmentation of unordered 3D point sets i.e. point clouds is a core problem in computer vision. 
+                                        This case study implements the seminal point cloud deep learning paper PointNet (Qi et al., 2017). 
+                                        
+                                        ## Dataset Utilzation and Data Transformation:
+                                        ***
+
+                                        Please refer to the pointers below:
+                                        
+                                        1. Once the ModelNet 10 dataset is downloaded, we parse each of the data folders. Each of this file is loaded and further sampled into  
+                                        a point cloud before further converting them to numpy array. Along with the pointcloud representation, we also store the object label of each object  
+                                        into a dictionary and utilize it as part of prediction pipeline.
+                                        2. Set Global Parameters required for training such as  
+                                        &nbsp;&nbsp;&nbsp;&nbsp; NUM_POINTS -> Number of points to sample for each object under each class.  
+                                        &nbsp;&nbsp;&nbsp;&nbsp; NUM_CLASSES -> Total number of object classes to be considered for training the classifier.  
+                                        &nbsp;&nbsp;&nbsp;&nbsp; BATCH_SIZE -> Number of samples that will be propagated through the network.  
+                                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Advantages of using a batch size < number of all samples:  
+                                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp a. It requires less memory. Since you train the network using fewer samples, the overall training procedure requires less memory.  
+                                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp That's especially important if you are not able to fit the whole dataset in your machine's memory.  
+                                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp b. Typically networks train faster with mini-batches. That's because we update the weights after each propagation. In our example we've  
+                                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp propagated 32 batches (32 of them had 32 samples) and after each of them we've updated our network's parameters.  
+                                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp If we used all samples during propagation we would make only 1 update for the network's parameter.  
+                                        3. Data Augmentation is a very crucial step for training pipeline as it increases the total sample size and also help us to treat difefrent point cloud  
+                                        scenarios.  
+                                        4. Next Step would be to build the pointnet model in keras based on the Architecture defined in original journal paper. 
+
+                                        ## Model Building
+                                        ***
+                                        '''
+                                    ),
+                                    html.Img(
+                                        id='pointnet_classifier',
+                                        src=r'/assets/Pointnet_Classifier.png', 
+                                        style={'width':'60%'}
+                                    ),
+                                    dcc.Markdown(
+                                        '''
+                                        &nbsp;&nbsp;&nbsp;&nbsp; In the classifier architecture above, Each convolution and fully-connected layer (with exception for end layers) consists of  
+                                        Convolution / Dense -> Batch Normalization -> ReLU Activation.
+                                        '''
+                                    ),
+                                    html.Img(
+                                        id='pointnet_classifier_cl_fc',
+                                        src=r'/assets/Pointnet_Classifier_CL_FC.png', 
+                                        style={'width':'60%'}
+                                    ),
+                                    dcc.Markdown(
+                                        '''
+                                        ##### More about this Dash app
+                                        
+                                        The purpose of this demo is to explore alternative visualization methods for object detection. Therefore,
+                                        the visualizations, predictions and videos are not generated in real time, but done beforehand. To read
+                                        more about it, please visit the [project repo](https://github.com/plotly/dash-sample-apps/tree/master/apps/dash-object-detection).
+                                        '''
+                                    )
+                                ]
+                            ),
+                            style={"height": "70vh"}
+                        ),
+                        dbc.ModalFooter(
+                            dbc.Button("CLOSE BUTTON", id="classifier-modal-close", className="ml-auto")
+                        ),
+                    ],
+                    id="modal", # Give the modal an id name 
+                    is_open=False,  # Open the modal at opening the webpage.
+                    size="xl",  # "sm", "lg", "xl" = small, large or extra large
+                    backdrop=True,  # Modal to not be closed by clicking on backdrop
+                    scrollable=True,  # Scrollable in case of large amount of text
+                    centered=True,  # Vertically center modal 
+                    keyboard=True,  # Close modal when escape is pressed
+                    fade=True,  # True, False
+                    # style={"max-width": "none", "width": "50%"}
+                )
+            ])
+
 
 layout = html.Div(
             children=[
