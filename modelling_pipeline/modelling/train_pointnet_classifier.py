@@ -100,16 +100,33 @@ def generate_pointnet_model(num_points=2048, num_classes=10):
     except Exception as ex:
         print('Caught Exception while Generating Pointnet Model Architecture: %s' %(str(ex)))
 
-def train_pointnet_classifier(model=None, train_dataset=None, test_dataset=None, model_history_logger=None):
+def train_pointnet_classifier(**kwargs):
+    # DL Model to train
+    model=kwargs.get('model') if 'model' in kwargs.keys() else None
+    
+    # Training and Validation Dataset
+    train_dataset=kwargs.get('train_dataset') if 'train_dataset' in kwargs.keys() else None
+    validation_dataset=kwargs.get('validation_dataset') if 'validation_dataset' in kwargs.keys() else None
+    
+    # Model Training Callbacks
+    callbacks=kwargs.get('callbacks') if 'callbacks' in kwargs.keys() else {}
+    
+    # Training Parameters
+    training_parameters=kwargs.get('training_parameters') if 'training_parameters' in kwargs.keys() else \
+                        {
+                            'learning_rate':0.001,
+                            'epochs':20 
+                        }
     try:
-        if model is not None and train_dataset is not None and test_dataset is not None and model_history_logger is not None:
+        if model is not None and train_dataset is not None and validation_dataset is not None:
+            callback_list = [callback_package['callback_item'] for callback_package in callbacks.values() if callback_package['callback_flag']==True]
             
             model.compile(
                 loss="sparse_categorical_crossentropy",
-                optimizer=keras.optimizers.Adam(learning_rate=0.001),
+                optimizer=keras.optimizers.Adam(learning_rate=training_parameters['learning_rate']),
                 metrics=["sparse_categorical_accuracy"],
             )
-            model.fit(train_dataset, epochs=20, callbacks=[model_history_logger], validation_data=test_dataset)
+            model.fit(train_dataset, epochs=training_parameters['epochs'], callbacks=list(callbacks.values()), validation_data=validation_dataset)
             return model
     except Exception as ex:
         print('Caught Exception while training the Pointnet Model: %s' %(str(ex)))
