@@ -14,11 +14,11 @@ from modelling_pipeline.preprocessing.data_preprocesser import augment_dataset, 
                                                                 generate_segmentation_dataset
 from modelling_pipeline.modelling.train_pointnet_classifier import generate_pointnet_model, train_pointnet_classifier
 from modelling_pipeline.modelling.train_pointnet_part_segmenter import generate_pointnet_segmentation_model, generate_pointnet_segmentation_lr_schedule, train_pointnet_segmenter
-from modelling_pipeline.utility.utility_datatransformation import download_dataset, generate_history_callback, save_model_weights 
+from modelling_pipeline.utility.utility_datatransformation import download_dataset, generate_history_callback, generate_es_callback, save_model_weights 
 
 if __name__ == '__main__':
-    TRAIN_POINTNET_CLASSIFIER = False
-    TRAIN_POINTNET_PART_SEGMENTATOR = True
+    TRAIN_POINTNET_CLASSIFIER = True
+    TRAIN_POINTNET_PART_SEGMENTATOR = False
     TRAIN_POINTNET_SEMANTIC_SEGMANTATOR = False
     POINTNET_CLASSIFIER_DATASET_URL = "http://3dvision.princeton.edu/projects/2014/3DShapeNets/ModelNet10.zip"
     POINTNET_CLASSIFIER_DATASET_DIR = r"modelling_pipeline"
@@ -42,6 +42,8 @@ if __name__ == '__main__':
         NUM_POINTS = 2048
         NUM_CLASSES = 10
         BATCH_SIZE = 32
+        LEARNING_RATE = 0.001
+        EPOCHS = 50
 
         train_points, test_points, train_labels, test_labels, CLASS_MAP = None, None, None, None, None
 
@@ -70,7 +72,7 @@ if __name__ == '__main__':
                 CLASS_MAP = pickle.load(f)
 
         # Data Augmentation to convert the numpy arrays of train and test dataset into tensorfloe based dataset format
-        train_dataset, test_dataset = augment_dataset(train_points=train_points, 
+        train_dataset, validation_dataset = augment_dataset(train_points=train_points, 
                                                     test_points=test_points,
                                                     train_labels=train_labels,
                                                     test_labels=test_labels,
@@ -81,17 +83,29 @@ if __name__ == '__main__':
                                                 num_classes=NUM_CLASSES)
 
         # Generate the Point Net Model History Callback Logger
-        pointnet_history_logger = generate_history_callback(history_file_name='pointnet_classifier_10cls_history.csv',
-                                                            history_path_to_save=r'modelling_pipeline\models')
+        pointnet_history_logger = generate_history_callback(history_file_name='pointnet_classifier_%scls_%sepochs_history.csv' %(str(NUM_CLASSES), str(EPOCHS)),
+                                                            history_path_to_save=r'modelling_pipeline\models\pointnet_classifier\%scls_%sepochs' %(str(NUM_CLASSES), str(EPOCHS)))
+        
+        # Generate Early Stopping Callback
+        pointnet_es_callback = generate_es_callback()
         
         # Train the Point Net Model 
         trained_pointnet_model = train_pointnet_classifier(model=pointnet_model, 
                                                         train_dataset=train_dataset, 
-                                                        test_dataset=test_dataset,
-                                                        model_history_logger=pointnet_history_logger)
+                                                        validation_dataset=validation_dataset,
+                                                        callbacks={
+                                                            'traininghistory_callback':{'callback_item':pointnet_history_logger,
+                                                                                        'callback_flag':True},
+                                                            'earlystopping_callback':{'callback_item':pointnet_es_callback,
+                                                                                    'callback_flag':False}
+                                                        },
+                                                        training_parameters={
+                                                            'learning_rate':LEARNING_RATE,
+                                                            'epochs':EPOCHS 
+                                                        })
 
         # Save Trained Point Net Model Weights
-        save_model_weights(model=trained_pointnet_model, model_name = 'pointnet_classifier_10cls.h5', path_to_save=r'modelling_pipeline\models')
+        save_model_weights(model=trained_pointnet_model, model_name = 'pointnet_classifier_%scls_%sepochs.h5' %(str(NUM_CLASSES), str(EPOCHS)), path_to_save=r'modelling_pipeline\models\pointnet_classifier\%scls_%sepochs' %(str(NUM_CLASSES), str(EPOCHS)))
     
     if TRAIN_POINTNET_PART_SEGMENTATOR:
         VAL_SPLIT = 0.2
