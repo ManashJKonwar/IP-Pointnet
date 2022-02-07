@@ -126,7 +126,7 @@ def train_pointnet_classifier(**kwargs):
                 optimizer=keras.optimizers.Adam(learning_rate=training_parameters['learning_rate']),
                 metrics=["sparse_categorical_accuracy"],
             )
-            model.fit(train_dataset, epochs=training_parameters['epochs'], callbacks=list(callbacks.values()), validation_data=validation_dataset)
+            model.fit(train_dataset, epochs=training_parameters['epochs'], callbacks=callback_list, validation_data=validation_dataset)
             return model
     except Exception as ex:
         print('Caught Exception while training the Pointnet Model: %s' %(str(ex)))
