@@ -128,8 +128,8 @@ layout = html.Div(
                                         html.Div(children=["Model Selection:"]),
                                         dcc.Dropdown(
                                             id="dropdown-model-selection",
-                                            options = [{'label': classifier_item, 'value': classifier_item} for classifier_item in ['pointnet_10cls_20epochs']],
-                                            value='pointnet_10cls_20epochs',
+                                            options = [{'label': classifier_item, 'value': classifier_item} for classifier_item in [model_name.split('.')[0] for model_name in trained_classifier_dict.keys()]],
+                                            value=[model_name.split('.')[0] for model_name in trained_classifier_dict.keys()][0],
                                             clearable=False,
                                         ),
                                     ],

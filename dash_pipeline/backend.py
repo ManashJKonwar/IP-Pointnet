@@ -29,7 +29,9 @@ for png_image in list(pathlib.Path(image_dir).glob('*.png')):
 #region Pointnet Classifier
 NUM_POINTS = 2048
 NUM_CLASSES = 10
+EPOCHS = 50
 CLASSIFIER_DATA_DIR = r'modelling_pipeline\datasets\ModelNet10'
+MODEL_DIR = r'modelling_pipeline\models\pointnet_classifier'
 
 test_points, test_labels, class_map = None, None, None
 
@@ -49,13 +51,23 @@ else:
     with open(r'dash_pipeline\datasets\pointnet_classifier\class_map.pkl', 'rb') as f:
         class_map = pickle.load(f)
 
-trained_classifier_model = None
-trained_classifier_model = load_classifier_model(model_wts_filename=r'modelling_pipeline\models\pointnet_classifier_10cls.h5', 
-                                                num_points=NUM_POINTS,
-                                                num_classes=NUM_CLASSES)
+trained_classifier_dict ={}
 
-trained_classifier_history = None
-trained_classifier_history = load_classifier_training_history(model_history_filename=r'modelling_pipeline\models\pointnet_classifier_10cls_history.csv')
+for model_dir in [dir_name for dir_name in os.listdir(MODEL_DIR) if os.path.isdir(os.path.join(os.path.abspath(MODEL_DIR),dir_name))]:
+    try:
+        num_classes, num_epochs = int(model_dir.split('_')[0].split('cls')[0]), int(model_dir.split('_')[1].split('epochs')[0])
+        
+        trained_classifier_model = None
+        trained_classifier_model = load_classifier_model(model_wts_filename=r'modelling_pipeline\models\pointnet_classifier\%scls_%sepochs\pointnet_classifier_%scls_%sepochs.h5' %(str(num_classes), str(num_epochs), str(num_classes), str(num_epochs)), 
+                                                        num_points=NUM_POINTS,
+                                                        num_classes=num_classes)
+
+        trained_classifier_history = None
+        trained_classifier_history = load_classifier_training_history(model_history_filename=r'modelling_pipeline\models\pointnet_classifier\%scls_%sepochs\pointnet_classifier_%scls_%sepochs_history.csv' %(str(num_classes), str(num_epochs), str(num_classes), str(num_epochs)))
+        
+        trained_classifier_dict['pointnet_classifier_%scls_%sepochs.h5' %(str(num_classes), str(num_epochs))] = {'model': trained_classifier_model, 'history': trained_classifier_history}
+    except Exception:
+        continue
 #endregion
 
 #region Pointnet Part Segmenter
