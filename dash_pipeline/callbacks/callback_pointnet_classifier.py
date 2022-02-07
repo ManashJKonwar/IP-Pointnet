@@ -21,7 +21,7 @@ from dash.dependencies import Input, Output, State
 from dash_pipeline.calback_manager import CallbackManager
 from dash_pipeline.backend import *
 from dash_pipeline.utility.utility_app import find_index
-from dash_pipeline.backend import trained_classifier_model, class_map, trained_classifier_history
+from dash_pipeline.backend import trained_classifier_dict, class_map
 
 callback_manager = CallbackManager()
 
@@ -52,7 +52,9 @@ data during classifier training
 @callback_manager.callback(Output(component_id='model-training-history', component_property='figure'),
                         Input(component_id='dropdown-model-selection', component_property='value'))
 def update_training_characteristics(selected_model):
-    if selected_model.__eq__('pointnet_10cls_20epochs'):
+    if selected_model is not None or selected_model!='':
+        trained_classifier_history = trained_classifier_dict[selected_model+'.h5']['history']
+        
         fig = make_subplots(rows=2, cols=1)
 
         final_loss_cols = [col for col in list(trained_classifier_history.columns) if 'loss' in col]
@@ -79,13 +81,16 @@ Callback for labelling prediction and validation data
 based on trained classifier model
 """
 @callback_manager.callback(Output(component_id='div-detection-mode', component_property='children'),
-                        Input(component_id='dropdown-image-selection', component_property='value'),
+                        [Input(component_id='dropdown-image-selection', component_property='value'),
+                        Input(component_id='dropdown-model-selection', component_property='value')],
                         State(component_id='dropdown-class-selection', component_property='value'))
-def update_detection_mode(image_value, class_value):
+def update_detection_mode(image_value, selected_model, class_value):
     class_index = list(class_map.keys())[list(class_map.values()).index(class_value)]
     start_index, end_index = find_index(test_labels, len(test_labels), class_index)
 
     if start_index != None and end_index != None:
+        trained_classifier_model=trained_classifier_dict[selected_model+'.h5']['model']
+
         total_images = end_index-start_index+1
         image_options = [class_value+'-'+str(image_no) for image_no in range(total_images)]
         image_index = image_options.index(image_value) + start_index
