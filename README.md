@@ -1,5 +1,5 @@
 # Pointnet Implementation Using TF2
-> The entire reporsitory covers 2 aspects - firstly implemnetation of pointnet architecture to classify objects, perform part segmentation and also to perform semantic segmentation, secondly it helps us to visualize the data around these pointnet architecture and perform prediction pipeline on test datasets using DASH Framework. The modeelling aspect is done by utilizing tensorflow 2 and code waork is completed by using keras.
+> The entire repository covers 2 aspects - firstly implementation of pointnet architecture to classify objects, perform part segmentation and also to perform semantic segmentation, secondly it helps us to visualize the data around these pointnet architecture and perform prediction pipeline on test datasets using DASH Framework. The modelling aspect is done by utilizing tensorflow 2 and code waork is completed by using keras.
 
 > Live demo [_here_](https://www.example.com). <!-- If you have the project hosted somewhere, include the link here. -->
 
